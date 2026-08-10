@@ -3,7 +3,7 @@
 > 매일 아침 8시, 내가 배운 내용으로 만든 복습 질문 한 개.
 
 부트캠프에서 배운 AI/ML 내용을 오래 기억하기 위해 만드는 학습 리마인드 서비스입니다.
-자료를 업로드해두면 AI가 질문과 모범 답안을 만들고, 매일 정해진 시간에 이메일 또는 디스코드로 보내줍니다.
+정리한 학습 노트를 넣어두면 AI가 질문과 모범 답안을 만들고, 매일 정해진 시간에 이메일 또는 디스코드로 보내줍니다.
 
 <br>
 
@@ -60,56 +60,49 @@ Q. ReLU에 대해서 설명해주세요.
 **행동 부담 최소화**
 가입은 한 번, 이후 매일 질문 하나. 접속할 사이트도, 제출할 답안도 없습니다.
 
-**자료를 넣기만 하면 학습**
-공부할 때마다 PDF나 ipynb를 올려두면 파싱부터 인덱싱까지 자동으로 처리됩니다.
+**내가 정리한 것만 출제된다**
+학습 자료는 Notion에 정리한 글을 Markdown으로 내보내 사용합니다. 정리했다는 것은 한 번 소화했다는 뜻이므로, 그 범위가 곧 복습 대상이 됩니다. 아직 안 배운 주제가 나오는 문제도 입력 단계에서 해결됩니다.
+
+**키워드 단위로 출제한다**
+글에서 AI 관련 키워드를 먼저 추출해 저장하고, 매일 아직 출제하지 않은 키워드 하나를 골라 질문을 만듭니다. 중복 출제 방지와 진도 파악이 구조적으로 해결됩니다.
 
 <br>
 
-## 기능
-
-| 기능 | 상태 |
-|---|---|
-| 학습 자료 업로드 (PDF / ipynb / md) | 예정 |
-| AI 질문 + 모범 답안 자동 생성 | 예정 |
-| 매일 오전 8시 자동 발송 | 예정 |
-| 디스코드 연동 + 답변 확인 버튼 | 예정 |
-| 이메일 연동 + 답변 확인 링크 | 예정 |
-| 구독 등록 / 해지 | 예정 |
-| 자료 업로드 시 자동 인덱싱 (CI/CD) | 예정 |
-
-<br>
-
-## 아키텍처
+## 동작 흐름
 
 ```
-        [학습 자료 업로드 (PDF / ipynb / md)]
+Notion 정리 글 → Markdown 내보내기 → data/
                       │
-                      ▼  (CI/CD 자동 트리거)
-              Document Parser
+                      ▼
+              마크다운 파일 읽기
                       │
-                   Chunking
-                      │
-                  Embedding
+                      ▼
+            키워드 추출 (Claude API)
                       │
                       ▼
           ┌───────────────────────┐
-          │  PostgreSQL + pgvector │
+          │  SQLite               │
+          │   자료 / 키워드 /        │
+          │   문제은행 / 호출 로그     │
           └───────────┬───────────┘
                       │
                       ▼
-              RAG Retrieval  ◀── 오늘의 출제 범위
+            미출제 키워드 1개 선택
                       │
                       ▼
-               Quiz Generator (LLM)
+             질문 생성 (Claude API)
                       │
                       ▼
-               Quiz Validator
+                  Validator
                       │
               ┌───────┴────────┐
-            Valid          Invalid → 재생성
+            통과            불합격 → 재생성
               │
               ▼
-        문제은행 저장 + 스케줄러 (매일 08:00)
+       문제은행 저장 (전날 밤 생성)
+              │
+              ▼
+        스케줄러 (매일 08:00 발송)
               │
       ┌───────┴────────┐
       ▼                ▼
@@ -118,24 +111,45 @@ Q. ReLU에 대해서 설명해주세요.
 
 <br>
 
-## 기술 스택
+## 개발 상태
 
-| 영역 | 사용 기술 |
+### Phase 1 — Baseline
+
+| 작업 | 상태 |
 |---|---|
-| Backend | Python, FastAPI |
-| LLM | Anthropic Claude API |
-| Database | PostgreSQL + pgvector |
-| Scheduler | APScheduler |
-| Notification | discord.py, Resend |
-| Parsing | pymupdf, nbformat |
-| Infra | Docker, Docker Compose |
-| CI/CD | GitHub Actions |
+| 질문·답변 생성 파이프라인 | ✅ 완료 |
+| 마크다운 자료 로딩 | ✅ 완료 |
+| AI 키워드 추출 | 진행 예정 |
+| 키워드 기반 질문 생성 | 예정 |
+| LLM 호출 로깅 | 예정 |
+| SQLite 저장 | 예정 |
+
+### 이후
+
+| Phase | 내용 | 상태 |
+|---|---|---|
+| Phase 2 | 생성 고도화 (few-shot으로 난이도 고정) | 예정 |
+| Phase 3-A | Claude Validator 구축 | 예정 |
+| Phase 4 | 발송 (스케줄러 / 디스코드 / 이메일) — **MVP 완료 지점** | 예정 |
+| Phase 3-B | 자체 분류기를 1차 필터로 배치 | MVP 이후 |
+| Phase 5 | 웹페이지, 구독 관리, CI/CD | 예정 |
+| Phase 6 | 개인화, Spaced Repetition | 선택 |
 
 <br>
 
-## 참고
+## 기술 스택
 
-기술 면접 질문 구독 서비스 [매일메일](https://www.maeil-mail.kr)에서 형식적인 영감을 받았습니다.
-질문 형태와 "제출하지 않고 확인만 하는" 구조가 목표하는 바와 가까웠습니다.
+| 영역 | 사용 기술 | 도입 시점 |
+|---|---|---|
+| Backend | Python, uv | 완료 |
+| LLM | Anthropic Claude API | 완료 |
+| 자료 읽기 | Markdown (표준 파일 IO) | 완료 |
+| Database | SQLite | Phase 1 |
+| Validator | Claude API → 자체 분류기(PyTorch) 하이브리드 | Phase 3 |
+| Scheduler | APScheduler | Phase 4 |
+| Notification | discord.py, Resend | Phase 4 |
+| Web | FastAPI, Jinja2 | Phase 5 |
+| Infra | Docker, Docker Compose | Phase 4~5 |
+| CI/CD | GitHub Actions | Phase 5 |
 
-다만 매일메일이 답변을 팀이 직접 작성하는 것과 달리, Sprint Quiz는 **개인이 업로드한 학습 자료를 기반으로 AI가 생성**한다는 점이 다릅니다.
+<br>
