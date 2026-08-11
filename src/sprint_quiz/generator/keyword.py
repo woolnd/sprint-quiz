@@ -3,6 +3,8 @@ import os
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
+from sprint_quiz.logger import log_call, Timer
+
 load_dotenv()
 
 client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -36,14 +38,15 @@ topic은 아래 목록에서 하나만 고르세요. 다른 값은 절대 사용
 
 def extract_keywords(content: str, filename: str = "") -> list[dict]:
     """학습 노트에서 AI/ML 관련 키워드를 추출한다."""
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=1000,
-        system=SYSTEM_PROMPT,
-        messages=[
-            {"role": "user", "content": f"다음 학습 노트에서 복습할 개념을 추출해주세요.\n\n{content}"}
-        ]
-    )
+    with Timer() as timer:
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=1000,
+            system=SYSTEM_PROMPT,
+            messages=[
+                {"role": "user", "content": f"다음 학습 노트에서 복습할 개념을 추출해주세요.\n\n{content}"}
+            ]
+        )
 
     text = response.content[0].text.strip()
 
@@ -54,7 +57,26 @@ def extract_keywords(content: str, filename: str = "") -> list[dict]:
             text = text[4:]
         text = text.strip()
 
-    data = json.loads(text)
+    parse_success = True
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        parse_success = False
+        data = None
+
+    log_call(
+        purpose="keyword_extract",
+        model=MODEL,
+        input_tokens=response.usage.input_tokens,
+        output_tokens=response.usage.output_tokens,
+        latency_ms=timer.elapsed_ms,
+        parse_success=parse_success,
+        note=filename,
+    )
+
+    if not parse_success:
+        raise ValueError(f"JSON 파싱 실패: {filename}")
+
     keywords = data["keywords"]
 
     # 출처 파일명을 각 키워드에 붙인다

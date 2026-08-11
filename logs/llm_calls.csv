@@ -1,0 +1,21 @@
+2026-08-11T15:31:01,keyword_extract,claude-haiku-4-5-20251001,3583,462,3039,True,0,example.md
+2026-08-11T15:31:04,quiz_generate,claude-haiku-4-5-20251001,3684,298,2892,True,0,CNN(Convolutional Neural Network)
+2026-08-11T15:31:07,quiz_generate,claude-haiku-4-5-20251001,3677,223,2488,True,0,Edge
+2026-08-11T15:31:09,quiz_generate,claude-haiku-4-5-20251001,3687,257,2828,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-11T15:31:12,quiz_generate,claude-haiku-4-5-20251001,3684,270,3046,True,0,완전연결층(FCN)
+2026-08-11T15:31:16,quiz_generate,claude-haiku-4-5-20251001,3683,272,3029,True,0,Convolution Filter(커널)
+2026-08-11T15:31:20,quiz_generate,claude-haiku-4-5-20251001,3684,298,4206,True,0,특징 맵(Feature Map)
+2026-08-11T15:31:25,quiz_generate,claude-haiku-4-5-20251001,3678,237,5461,True,0,Stride
+2026-08-11T15:31:28,quiz_generate,claude-haiku-4-5-20251001,3678,240,2749,True,0,Padding
+2026-08-11T15:31:31,quiz_generate,claude-haiku-4-5-20251001,3686,288,3394,True,0,Receptive Field(수용 영역)
+2026-08-11T15:31:35,quiz_generate,claude-haiku-4-5-20251001,3680,232,3163,True,0,Pooling Layer
+2026-08-11T15:31:37,quiz_generate,claude-haiku-4-5-20251001,3680,204,2394,True,0,Max Pooling
+2026-08-11T15:31:40,quiz_generate,claude-haiku-4-5-20251001,3680,235,2730,True,0,Average Pooling
+2026-08-11T15:31:42,quiz_generate,claude-haiku-4-5-20251001,3679,263,2736,True,0,Flatten Layer
+2026-08-11T15:31:44,quiz_generate,claude-haiku-4-5-20251001,3684,228,1978,True,0,GAP(Global Average Pooling)
+2026-08-11T15:31:47,quiz_generate,claude-haiku-4-5-20251001,3678,208,2333,True,0,LeNet
+2026-08-11T15:31:49,quiz_generate,claude-haiku-4-5-20251001,3678,273,2310,True,0,AutoEncoder
+2026-08-11T15:31:52,quiz_generate,claude-haiku-4-5-20251001,3684,271,2535,True,0,표현학습(Representation Learning)
+2026-08-11T15:31:54,quiz_generate,claude-haiku-4-5-20251001,3678,236,1971,True,0,Encoder
+2026-08-11T15:31:56,quiz_generate,claude-haiku-4-5-20251001,3678,237,2377,True,0,Decoder
+2026-08-11T15:31:59,quiz_generate,claude-haiku-4-5-20251001,3682,269,2767,True,0,Denoising AutoEncoder
