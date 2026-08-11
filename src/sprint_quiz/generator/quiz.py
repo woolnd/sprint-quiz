@@ -3,6 +3,7 @@ import os
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
+from sprint_quiz.logger import log_call, Timer
 
 load_dotenv()
 
@@ -47,12 +48,13 @@ def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "")
 [학습 자료]
 {content}"""
 
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=1000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_message}],
-    )
+    with Timer() as timer:
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=1000,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": user_message}],
+        )
 
     text = response.content[0].text.strip()
 
@@ -63,7 +65,25 @@ def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "")
             text = text[4:]
         text = text.strip()
 
-    quiz = json.loads(text)
+    parse_success = True
+    try:
+        quiz = json.loads(text)
+    except json.JSONDecodeError:
+        parse_success = False
+        quiz = None
+
+    log_call(
+        purpose="quiz_generate",
+        model=MODEL,
+        input_tokens=response.usage.input_tokens,
+        output_tokens=response.usage.output_tokens,
+        latency_ms=timer.elapsed_ms,
+        parse_success=parse_success,
+        note=keyword,
+    )
+
+    if not parse_success:
+        raise ValueError(f"JSON 파싱 실패: {keyword}")
 
     # LLM이 판단할 필요 없는 정보는 코드에서 직접 넣는다
     quiz["keyword"] = keyword
