@@ -1,0 +1,95 @@
+import json
+import sqlite3
+
+from sprint_quiz.db.schema import get_connection
+
+
+def save_material(filename: str, content: str, content_hash: str) -> int | None:
+    """자료를 저장하고 id를 반환한다. 이미 저장된 자료면 None을 반환한다."""
+    with get_connection() as conn:
+        try:
+            cur = conn.execute(
+                "INSERT INTO materials (filename, content, content_hash) VALUES (?, ?, ?)",
+                (filename, content, content_hash)
+            )
+            return cur.lastrowid # 방금 저장된 행의 id
+        except sqlite3.IntegrityError:
+            # content_hash UNIQUE 위반 = 이미 처리한 자료
+            return None
+
+
+def get_material_by_hash(content_hash: str) -> sqlite3.Row | None:
+    """해시로 자료를 조회한다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT * FROM materials WHERE content_hash = ?", (content_hash,)
+        )
+        return cur.fetchone()
+
+
+def save_keywords(material_id: int, keywords: list[dict]) -> int:
+    """키워드 목록을 저장하고 실제로 저장된 개수를 반환한다."""
+    saved = 0
+    with get_connection() as conn:
+        for kw in keywords:
+            try:
+                conn.execute(
+                    "INSERT INTO keywords (material_id, keyword, topic) VALUES (?, ?, ?)",
+                    (material_id, kw["keyword"], kw.get("topic", "")),
+                )
+                saved += 1
+            except sqlite3.IntegrityError:
+                # 이미 있는 키워드는 건너뛰고 나머지는 계속 저장한다
+                continue
+    return saved
+
+def get_unused_keywords(limit: int = 10) -> list[sqlite3.Row]:
+    """아직 출제하지 않은 키워드를 가져온다.
+    질문을 만들려면 원본 자료 내용도 필요하므로 materials와 JOIN한다"""
+
+    with get_connection() as conn:
+        cur = conn.execute("""
+            SELECT k.*, m.content, m.filename
+            FROM keywords k
+            JOIN materials m ON k.material_id = m.id
+            WHERE k.is_used = 0
+            ORDER BY k.id
+            LIMIT ?
+        """, (limit,))
+        return cur.fetchall()
+
+
+def save_quiz(keyword_id: int, quiz: dict) -> int:
+    """생성된 질문을 저장하고, 해당 키워드를 출제 완료로 표시한다.
+    두 작업을 같은 트랜잭션에서 처리해 하나만 반영되는 상황을 막는다.
+    """
+    with get_connection() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO quizzes (keyword_id, question, answer, keywords_hint, topic, source)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                keyword_id,
+                quiz["question"],
+                quiz["answer"],
+                # 리스트를 JSON 문자열로 변환. ensure_ascii=False라야 한글이 그대로 저장된다
+                json.dumps(quiz.get("keywords", []), ensure_ascii=False),
+                quiz.get("topic", ""),
+                quiz.get("source", ""),
+            ),
+        )
+        # 질문을 만들었으므로 이 키워드는 출제 완료 처리
+        conn.execute(
+            "UPDATE keywords SET is_used = 1, used_at = datetime('now', 'localtime') WHERE id = ?",
+            (keyword_id,),
+        )
+        return cur.lastrowid
+
+def get_pending_quizzes() -> list[sqlite3.Row]:
+    """아직 발송하지 않은 질문 목록을 가져온다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT * FROM quizzes WHERE status = 'pending' ORDER BY id"
+        )
+        return cur.fetchall()
