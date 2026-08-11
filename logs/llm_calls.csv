@@ -22,3 +22,5 @@
 2026-08-11T17:09:17,keyword_extract,claude-haiku-4-5-20251001,3583,405,3018,True,0,example.md
 2026-08-11T17:10:02,quiz_generate,claude-haiku-4-5-20251001,3684,283,3432,True,0,CNN (Convolutional Neural Network)
 2026-08-11T17:10:04,quiz_generate,claude-haiku-4-5-20251001,3677,190,2230,True,0,Edge
+2026-08-11T17:47:55,quiz_generate,claude-haiku-4-5-20251001,3687,248,2937,True,0,HOG (Histogram of Oriented Gradients)
+2026-08-11T17:47:58,quiz_generate,claude-haiku-4-5-20251001,3683,245,2964,True,0,Convolution Filter (커널)
