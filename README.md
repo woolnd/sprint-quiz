@@ -111,18 +111,52 @@ Notion 정리 글 → Markdown 내보내기 → data/
 
 <br>
 
+## 사용법
+
+Notion에서 정리한 글을 Markdown으로 내보내 `data/sample/`에 넣고 스크립트를 실행합니다.
+
+```bash
+# 자료·키워드만 등록
+uv run python scripts/index.py --quiz 0
+
+# 질문 5개까지 함께 생성 (기본값)
+uv run python scripts/index.py
+
+# 생성할 질문 개수 지정
+uv run python scripts/index.py --quiz 10
+```
+
+이미 등록한 자료는 내용 해시로 걸러져 다시 처리되지 않습니다.
+
+```
+자료 파일 1개 발견
+ [스킵] example.md - 이미 등록됨
+질문 생성 (2개)
+ HOG(Histogram of Oriented Gradients)에 대해서 설명해주세요.
+ Convolution Filter(커널)에 대해서 설명해주세요.
+========================================
+신규 자료      0개
+신규 키워드    0개
+생성된 질문    2개
+발송 대기      4개
+========================================
+```
+
+<br>
+
 ## 개발 상태
 
-### Phase 1 — Baseline
+### Phase 1 — Baseline ✅ 완료
 
 | 작업 | 상태 |
 |---|---|
-| 질문·답변 생성 파이프라인 | ✅ 완료 |
-| 마크다운 자료 로딩 | ✅ 완료 |
-| AI 키워드 추출 | 진행 예정 |
-| 키워드 기반 질문 생성 | 예정 |
-| LLM 호출 로깅 | 예정 |
-| SQLite 저장 | 예정 |
+| 질문·답변 생성 파이프라인 | ✅ |
+| 마크다운 자료 로딩 | ✅ |
+| AI 키워드 추출 | ✅ |
+| 키워드 기반 질문 생성 | ✅ |
+| LLM 호출 로깅 | ✅ |
+| SQLite 저장 | ✅ |
+| 인덱싱 스크립트 통합 | ✅ |
 
 ### 이후
 
@@ -144,7 +178,7 @@ Notion 정리 글 → Markdown 내보내기 → data/
 | Backend | Python, uv | 완료 |
 | LLM | Anthropic Claude API | 완료 |
 | 자료 읽기 | Markdown (표준 파일 IO) | 완료 |
-| Database | SQLite | Phase 1 |
+| Database | SQLite | 완료 |
 | Validator | Claude API → 자체 분류기(PyTorch) 하이브리드 | Phase 3 |
 | Scheduler | APScheduler | Phase 4 |
 | Notification | discord.py, Resend | Phase 4 |
