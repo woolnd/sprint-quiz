@@ -102,7 +102,7 @@ def save_validation(
         attempt: int = 0
 ) -> int:
     """검증 결과를 저장한다. 불합격한 경우 quiz_id는 None이다."""
-    with get_connection as conn:
+    with get_connection() as conn:
         cur = conn.execute(
             """
             INSERT INTO validations
@@ -130,7 +130,7 @@ def save_validation(
 
 def get_recent_questions(limit: int = 10) -> list[str]:
     """최근 생성된 질문 목록을 가져온다 (중복 판정용)."""
-    with get_connection as conn:
+    with get_connection() as conn:
         cur = conn.execute(
             "SELECT question FROM quizzes ORDER BY id DESC LIMIT ?", (limit,)
         )

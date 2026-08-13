@@ -38,3 +38,9 @@
 2026-08-13T14:14:30,quiz_validate,claude-haiku-4-5-20251001,4139,144,2057,True,0,Max Pooling
 2026-08-13T14:14:32,quiz_validate,claude-haiku-4-5-20251001,4145,142,2022,True,0,Transformer
 2026-08-13T14:14:33,quiz_validate,claude-haiku-4-5-20251001,4170,89,1500,True,0,Padding
+2026-08-13T14:27:01,quiz_generate,claude-haiku-4-5-20251001,3684,285,2960,True,0,CNN (Convolutional Neural Network)
+2026-08-13T14:27:03,quiz_validate,claude-haiku-4-5-20251001,4304,55,1296,True,0,CNN (Convolutional Neural Network)
+2026-08-13T14:27:05,quiz_generate,claude-haiku-4-5-20251001,3677,220,2633,True,0,Edge
+2026-08-13T14:27:06,quiz_validate,claude-haiku-4-5-20251001,4242,55,1030,True,0,Edge
+2026-08-13T14:27:09,quiz_generate,claude-haiku-4-5-20251001,3687,231,2465,True,0,HOG (Histogram of Oriented Gradients)
+2026-08-13T14:27:10,quiz_validate,claude-haiku-4-5-20251001,4288,55,1088,True,0,HOG (Histogram of Oriented Gradients)
