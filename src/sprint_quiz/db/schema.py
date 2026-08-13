@@ -67,6 +67,28 @@ CREATE TABLE IF NOT EXISTS responses (
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
     FOREIGN KEY (subscriber_id) REFERENCES subscribers(id)
 );
+
+-- Validator 판정 결과 (Phase 3-B 분류기 학습 데이터가 된다)
+CREATE TABLE IF NOT EXISTS validations (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    quiz_id       INTEGER,          -- 통과한 경우에만 채워진다
+    keyword       TEXT NOT NULL,
+    question      TEXT NOT NULL,
+    answer        TEXT NOT NULL,
+    -- 판정 결과: 1이면 통과, 0이면 불합격
+    passed        INTEGER NOT NULL,
+    -- 항목별 판정 (각 0/1)
+    groundedness  INTEGER,
+    correctness   INTEGER,
+    simplicity    INTEGER,
+    duplicate     INTEGER,
+    -- 불합격 사유 (LLM이 작성)
+    reason        TEXT,
+    -- 몇 번째 시도였는지 (0부터 시작)
+    attempt       INTEGER NOT NULL DEFAULT 0,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
+);
 """
 
 
@@ -83,3 +105,6 @@ def init_db() -> None:
     with get_connection() as conn:
         # executescript는 여러 SQL문을 한 번에 실행한다
         conn.executescript(SCHEMA)
+
+
+

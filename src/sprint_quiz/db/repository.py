@@ -93,3 +93,46 @@ def get_pending_quizzes() -> list[sqlite3.Row]:
             "SELECT * FROM quizzes WHERE status = 'pending' ORDER BY id"
         )
         return cur.fetchall()
+
+
+def save_validation(
+        quiz_id: int | None,
+        quiz: dict,
+        result: dict,
+        attempt: int = 0
+) -> int:
+    """검증 결과를 저장한다. 불합격한 경우 quiz_id는 None이다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO validations
+                (quiz_id, keyword, question, answer, passed,
+                 groundedness, correctness, simplicity, duplicate, reason, attempt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                quiz_id,
+                quiz["keyword"],
+                quiz["question"],
+                quiz["answer"],
+                int(result["passed"]),
+                int(result.get("groundedness", True)),
+                int(result.get("correctness", True)),
+                int(result.get("simplicity", True)),
+                int(result.get("duplicate", True)),
+                result.get("reason", ""),
+                attempt
+            )
+        )
+
+        return cur.lastrowid
+
+
+def get_recent_questions(limit: int = 10) -> list[str]:
+    """최근 생성된 질문 목록을 가져온다 (중복 판정용)."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT question FROM quizzes ORDER BY id DESC LIMIT ?", (limit,)
+        )
+
+        return [row["question"] for row in cur.fetchall()]
