@@ -24,3 +24,5 @@
 2026-08-11T17:10:04,quiz_generate,claude-haiku-4-5-20251001,3677,190,2230,True,0,Edge
 2026-08-11T17:47:55,quiz_generate,claude-haiku-4-5-20251001,3687,248,2937,True,0,HOG (Histogram of Oriented Gradients)
 2026-08-11T17:47:58,quiz_generate,claude-haiku-4-5-20251001,3683,245,2964,True,0,Convolution Filter (커널)
+2026-08-13T11:04:02,quiz_generate_batch,claude-haiku-4-5-20251001,3861,1137,8303,True,0,batch_size=5
+2026-08-13T11:07:15,quiz_generate_batch,claude-haiku-4-5-20251001,3877,1545,9216,True,0,batch_size=8
