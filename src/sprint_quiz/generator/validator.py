@@ -77,7 +77,28 @@ def validate_quiz(
     recent = recent_questions or []
     recent_text = "\n".join(f"- {q}" for q in recent) if recent else "(없음)"
 
-    user_message = f"""아래 질문·답변을 검증해주세요.
+
+    with Timer() as timer:
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=500,
+            system=[
+                {
+                    "type": "text",
+                    "text": VALIDATOR_SYSTEM_PROMPT,
+                },
+                {
+                    "type": "text",
+                    "text": f"[학습 자료]\n{content}",
+                    "cache_control": {"type": "ephemeral"},
+                },
+            ],
+            # 검증 대상만 user 메시지에 넣는다
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""아래 질문·답변을 검증해주세요.
+
 [키워드]
 {quiz["keyword"]}
 
@@ -88,17 +109,9 @@ def validate_quiz(
 {quiz["answer"]}
 
 [최근 출제된 질문]
-{recent_text}
-
-[학습 자료]
-{content}"""
-
-    with Timer() as timer:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=500,   # 판정 결과만 받으므로 짧게
-            system=VALIDATOR_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_message}],
+{recent_text}""",
+                }
+            ],
         )
 
     text = response.content[0].text.strip()
@@ -121,6 +134,8 @@ def validate_quiz(
         model=MODEL,
         input_tokens=response.usage.input_tokens,
         output_tokens=response.usage.output_tokens,
+        cache_creation=getattr(response.usage, "cache_creation_input_tokens", 0),
+        cache_read=getattr(response.usage, "cache_read_input_tokens", 0),
         latency_ms=timer.elapsed_ms,
         parse_success=parse_success,
         note=quiz["keyword"],
