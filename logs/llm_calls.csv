@@ -26,3 +26,15 @@
 2026-08-11T17:47:58,quiz_generate,claude-haiku-4-5-20251001,3683,245,2964,True,0,Convolution Filter (커널)
 2026-08-13T11:04:02,quiz_generate_batch,claude-haiku-4-5-20251001,3861,1137,8303,True,0,batch_size=5
 2026-08-13T11:07:15,quiz_generate_batch,claude-haiku-4-5-20251001,3877,1545,9216,True,0,batch_size=8
+2026-08-13T14:09:58,quiz_validate,claude-haiku-4-5-20251001,3871,55,1070,True,0,Padding
+2026-08-13T14:10:00,quiz_validate,claude-haiku-4-5-20251001,3843,133,2541,True,0,Padding
+2026-08-13T14:10:02,quiz_validate,claude-haiku-4-5-20251001,3858,110,2158,True,0,Stride
+2026-08-13T14:10:05,quiz_validate,claude-haiku-4-5-20251001,3852,217,2442,True,0,Max Pooling
+2026-08-13T14:10:07,quiz_validate,claude-haiku-4-5-20251001,3858,111,1708,True,0,Transformer
+2026-08-13T14:10:08,quiz_validate,claude-haiku-4-5-20251001,3883,89,1345,True,0,Padding
+2026-08-13T14:14:22,quiz_validate,claude-haiku-4-5-20251001,4158,55,1097,True,0,Padding
+2026-08-13T14:14:25,quiz_validate,claude-haiku-4-5-20251001,4130,193,3002,True,0,Padding
+2026-08-13T14:14:28,quiz_validate,claude-haiku-4-5-20251001,4145,149,2572,True,0,Stride
+2026-08-13T14:14:30,quiz_validate,claude-haiku-4-5-20251001,4139,144,2057,True,0,Max Pooling
+2026-08-13T14:14:32,quiz_validate,claude-haiku-4-5-20251001,4145,142,2022,True,0,Transformer
+2026-08-13T14:14:33,quiz_validate,claude-haiku-4-5-20251001,4170,89,1500,True,0,Padding

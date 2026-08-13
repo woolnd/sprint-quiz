@@ -23,8 +23,11 @@ from sprint_quiz.parser.base import read_document
 from sprint_quiz.parser.markdown import list_markdown_files
 from sprint_quiz.generator.keyword import extract_keywords
 from sprint_quiz.generator.quiz import generate_quiz
+from sprint_quiz.generator.validator import validate_quiz
+from sprint_quiz.db.repository import save_validation, get_recent_questions
 
 DATA_DIR = "data/sample"
+MAX_RETRY = 2      # 재생성 최대 횟수
 
 def index_materials() -> tuple[int, int]:
     """자료를 읽어 DB에 저장하고 키워드를 추출한다.
@@ -100,6 +103,34 @@ def generate_quizzes(count: int) -> int:
 
     return generated
 
+
+def generate_with_validation(content: str, kw: dict) -> dict | None:
+    """질문을 생성하고 검증한다. 통과할 때까지 재시도한다.
+
+    Returns:
+        통과한 질문 정보. 끝내 실패하면 None.
+    """
+    recent = get_recent_questions(limit=10)
+
+    for attempt in range(MAX_RETRY + 1):
+        quiz = generate_quiz(
+            content=content,
+            keyword=kw["keyword"],
+            topic=kw["topic", ""],
+            source=kw.get("filename", "")
+        )
+
+        result = validate_quiz(content, quiz, recent_questions=recent)
+
+        if result["passed"]:
+            # 통과분은 호출한 쪽에서 저장하고, Quiz_id를 받아 검증 기록을 남긴다
+            return {"quiz":quiz, "result":result, "attempt":attempt}
+
+        # 불합격 기록은 quiz_id 없이 남긴다 (학습 데이터로 쓰인다)
+        save_validation(None, quiz, result, attempt)
+        print(f"    [재생성] {kw['keyword']} - {result['reason']}")
+
+    return None   
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="학습 자료를 인덱싱하고 질문을 생성한다")
