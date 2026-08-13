@@ -44,3 +44,36 @@
 2026-08-13T14:27:06,quiz_validate,claude-haiku-4-5-20251001,4242,55,1030,True,0,Edge
 2026-08-13T14:27:09,quiz_generate,claude-haiku-4-5-20251001,3687,231,2465,True,0,HOG (Histogram of Oriented Gradients)
 2026-08-13T14:27:10,quiz_validate,claude-haiku-4-5-20251001,4288,55,1088,True,0,HOG (Histogram of Oriented Gradients)
+2026-08-13T14:45:56,quiz_generate,claude-haiku-4-5-20251001,3666,272,0,0,3613,True,0,Convolution Filter (커널)
+2026-08-13T14:45:57,quiz_validate,claude-haiku-4-5-20251001,4349,55,0,0,1101,True,0,Convolution Filter (커널)
+2026-08-13T14:46:00,quiz_generate,claude-haiku-4-5-20251001,3672,244,0,0,2941,True,0,특징 맵 (활성화 맵)
+2026-08-13T14:46:01,quiz_validate,claude-haiku-4-5-20251001,4348,55,0,0,1223,True,0,특징 맵 (활성화 맵)
+2026-08-13T14:46:03,quiz_generate,claude-haiku-4-5-20251001,3661,211,0,0,2045,True,0,Stride
+2026-08-13T14:46:04,quiz_validate,claude-haiku-4-5-20251001,4329,55,0,0,1033,True,0,Stride
+2026-08-13T14:49:28,quiz_generate,claude-haiku-4-5-20251001,3661,207,0,0,2195,True,0,Padding
+2026-08-13T14:49:31,quiz_validate,claude-haiku-4-5-20251001,4338,55,0,0,2235,True,0,Padding
+2026-08-13T14:49:34,quiz_generate,claude-haiku-4-5-20251001,3669,282,0,0,3206,True,0,Receptive Field (수용 영역)
+2026-08-13T14:49:35,quiz_validate,claude-haiku-4-5-20251001,4447,55,0,0,1065,True,0,Receptive Field (수용 영역)
+2026-08-13T14:49:37,quiz_generate,claude-haiku-4-5-20251001,3663,204,0,0,2307,True,0,Pooling Layer
+2026-08-13T14:49:39,quiz_validate,claude-haiku-4-5-20251001,4390,55,0,0,1259,True,0,Pooling Layer
+2026-08-13T14:56:09,keyword_extract,claude-haiku-4-5-20251001,6075,339,0,0,2367,True,0,example.md
+2026-08-13T14:56:12,quiz_generate,claude-haiku-4-5-20251001,34,258,6118,0,2833,True,0,CNN
+2026-08-13T14:56:13,quiz_validate,claude-haiku-4-5-20251001,272,55,0,0,1115,True,0,CNN
+2026-08-13T14:56:15,quiz_generate,claude-haiku-4-5-20251001,34,179,0,6118,1910,True,0,Edge
+2026-08-13T14:56:16,quiz_validate,claude-haiku-4-5-20251001,203,55,0,0,1378,True,0,Edge
+2026-08-13T14:56:19,quiz_generate,claude-haiku-4-5-20251001,44,242,0,6118,2357,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T14:56:20,quiz_validate,claude-haiku-4-5-20251001,294,55,0,0,1330,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T14:59:25,keyword_extract,claude-haiku-4-5-20251001,6075,372,0,0,2734,True,0,example.md
+2026-08-13T14:59:28,quiz_generate,claude-haiku-4-5-20251001,34,267,0,6118,2800,True,0,CNN
+2026-08-13T14:59:29,quiz_validate,claude-haiku-4-5-20251001,278,55,0,0,1096,True,0,CNN
+2026-08-13T14:59:31,quiz_generate,claude-haiku-4-5-20251001,34,197,0,6118,2124,True,0,Edge
+2026-08-13T14:59:32,quiz_validate,claude-haiku-4-5-20251001,221,55,0,0,1018,True,0,Edge
+2026-08-13T14:59:34,quiz_generate,claude-haiku-4-5-20251001,44,275,0,6118,2719,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T14:59:36,quiz_validate,claude-haiku-4-5-20251001,327,55,0,0,1311,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T15:01:35,keyword_extract,claude-haiku-4-5-20251001,6075,472,0,0,3314,True,0,example.md
+2026-08-13T15:01:38,quiz_generate,claude-haiku-4-5-20251001,34,271,0,6118,3459,True,0,CNN
+2026-08-13T15:01:40,quiz_validate,claude-haiku-4-5-20251001,281,55,0,6488,1953,True,0,CNN
+2026-08-13T15:01:42,quiz_generate,claude-haiku-4-5-20251001,34,194,0,6118,2086,True,0,Edge
+2026-08-13T15:01:44,quiz_validate,claude-haiku-4-5-20251001,218,55,0,6488,1446,True,0,Edge
+2026-08-13T15:01:46,quiz_generate,claude-haiku-4-5-20251001,44,253,0,6118,2528,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T15:01:47,quiz_validate,claude-haiku-4-5-20251001,305,55,0,6488,1055,True,0,HOG(Histogram of Oriented Gradients)

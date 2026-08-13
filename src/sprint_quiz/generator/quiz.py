@@ -43,17 +43,28 @@ SYSTEM_PROMPT = """당신은 AI/ML 부트캠프 학생을 위한 복습 질문�
 
 def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "") -> dict:
     """지정한 키워드에 대한 복습 질문과 모범 답안을 생성한다."""
-    user_message = f"""아래 학습 자료를 참고해서 "{keyword}" 개념에 대한 복습 질문 1개를 만들어주세요.
-
-[학습 자료]
-{content}"""
 
     with Timer() as timer:
         response = client.messages.create(
             model=MODEL,
             max_tokens=1000,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_message}],
+            system=[
+                {
+                    "type": "text",
+                    "text": SYSTEM_PROMPT
+                },
+                {
+                    "type":"text",
+                    "text":f"[학습 자료]\n{content}",
+                    "cache_control": {"type": "ephemeral"}
+                }
+            ],
+            messages=[
+                {
+                    "role": "user",
+                    "content": f'"{keyword}" 개념에 대한 복습 질문 1개를 만들어주세요.',
+                }
+            ],
         )
 
     text = response.content[0].text.strip()
@@ -80,6 +91,8 @@ def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "")
         latency_ms=timer.elapsed_ms,
         parse_success=parse_success,
         note=keyword,
+        cache_creation=getattr(response.usage, "cache_creation_input_tokens", 0),
+        cache_read=getattr(response.usage, "cache_read_input_tokens", 0)
     )
 
     if not parse_success:
@@ -151,20 +164,23 @@ def generate_quiz_batch(
         f"{i}. {kw['keyword']}" for i, kw in enumerate(keywords, start=1)
     )
 
-    user_message = f"""아래 학습 자료를 참고해서 다음 {len(keywords)}개 키워드 각각에 대해 복습 질문을 만들어주세요.
-
-[키워드 목록]
-{keyword_list}
-
-[학습 자료]
-{content}"""
-
     with Timer() as timer:
         response = client.messages.create(
             model=MODEL,
             max_tokens=500 * len(keywords) + 500,
-            system=BATCH_SYSTEM_PROMPT,
-            messages=[{"role":'user', 'content':user_message}]
+            system=[
+                {"type": "text", "text": BATCH_SYSTEM_PROMPT},
+                {
+                    "type": "text",
+                    "text": f"[학습 자료]\n{content}",
+                    "cache_control": {"type": "ephemeral"},
+                },
+            ],
+            # 자료를 system으로 옮겼으므로 user에는 키워드 목록만 남긴다
+            messages=[{
+                "role": "user",
+                "content": f"다음 {len(keywords)}개 키워드 각각에 대해 복습 질문을 만들어주세요.\n\n[키워드 목록]\n{keyword_list}",
+            }],
         )
 
     text = response.content[0].text.strip()
@@ -188,6 +204,8 @@ def generate_quiz_batch(
         model=MODEL,
         input_tokens=response.usage.input_tokens,
         output_tokens=response.usage.output_tokens,
+        cache_creation=getattr(response.usage, "cache_creation_input_tokens", 0),
+        cache_read=getattr(response.usage, "cache_read_input_tokens", 0),
         latency_ms=timer.elapsed_ms,
         parse_success=parse_success,
         note=f"batch_size={len(keywords)}"
