@@ -40,7 +40,7 @@ Sprint Quiz는 그 판단과 행동을 서비스가 대신합니다. 사용자�
 ```
 📚 오늘의 복습 질문
 
-[범위] 딥러닝 / 활성화 함수
+[범위] 딥러닝
 
 Q. ReLU에 대해서 설명해주세요.
 
@@ -66,6 +66,9 @@ Q. ReLU에 대해서 설명해주세요.
 **키워드 단위로 출제한다**
 글에서 AI 관련 키워드를 먼저 추출해 저장하고, 매일 아직 출제하지 않은 키워드 하나를 골라 질문을 만듭니다. 중복 출제 방지와 진도 파악이 구조적으로 해결됩니다.
 
+**발송 전에 검증한다**
+LLM이 만든 답변이 그대로 전달되는 구조이므로, 틀린 설명이 나가지 않도록 발송 전 검증 단계를 둡니다. 통과하지 못한 질문은 재생성합니다.
+
 <br>
 
 ## 동작 흐름
@@ -83,17 +86,18 @@ Notion 정리 글 → Markdown 내보내기 → data/
           ┌───────────────────────┐
           │  SQLite               │
           │   자료 / 키워드 /        │
-          │   문제은행 / 호출 로그     │
+          │   문제은행 / 검증 기록     │
           └───────────┬───────────┘
                       │
                       ▼
-            미출제 키워드 1개 선택
+            미출제 키워드 선택
                       │
                       ▼
              질문 생성 (Claude API)
                       │
                       ▼
-                  Validator
+              Validator (Claude API)
+              G / C / S / D 4개 기준
                       │
               ┌───────┴────────┐
             통과            불합격 → 재생성
@@ -122,8 +126,8 @@ uv run python scripts/index.py --quiz 0
 # 질문 5개까지 함께 생성 (기본값)
 uv run python scripts/index.py
 
-# 생성할 질문 개수 지정
-uv run python scripts/index.py --quiz 10
+# 생성할 질문 개수와 동시 실행 수 지정
+uv run python scripts/index.py --quiz 10 --concurrency 3
 ```
 
 이미 등록한 자료는 내용 해시로 걸러져 다시 처리되지 않습니다.
@@ -131,16 +135,53 @@ uv run python scripts/index.py --quiz 10
 ```
 자료 파일 1개 발견
  [스킵] example.md - 이미 등록됨
-질문 생성 (2개)
- HOG(Histogram of Oriented Gradients)에 대해서 설명해주세요.
- Convolution Filter(커널)에 대해서 설명해주세요.
+
+질문 생성 (6개, 동시 실행 3)
+  CNN에 대해서 설명해주세요.
+  HOG(Histogram of Oriented Gradients)에 대해서 설명해주세요.
+  Edge에 대해서 설명해주세요.
+  ...
 ========================================
 신규 자료      0개
 신규 키워드    0개
-생성된 질문    2개
-발송 대기      4개
+생성된 질문    6개
+발송 대기      6개
 ========================================
 ```
+
+<br>
+
+## 측정과 개선
+
+"성능이 좋아졌다"가 아니라 **"이런 문제가 있었고, 이렇게 해결했고, 이 숫자로 확인했다"** 형태로 기록합니다.
+모든 LLM 호출의 토큰 수·응답 시간·파싱 성공 여부·캐시 적중을 로그로 남기며, 이 로그가 모든 판단의 근거가 됩니다.
+
+| 문제 | 해결 | 결과 |
+|---|---|---|
+| 프롬프트로 "쉽게 내라"고 해도 응용·비교 문제로 샘 | 추상적 금지 규칙 대신 실제 이탈 사례를 나쁜 예시로 프롬프트에 삽입 + 질문 형식 고정 | 난이도 이탈 **35% → 0%** |
+| LLM 출력 형식이 매번 달라 파싱이 깨짐 | 구조화된 JSON 스키마 강제 | 파싱 실패율 **0%** |
+| 질문마다 학습 자료 전체를 반복 투입 | 여러 키워드를 한 호출로 묶는 배치 생성 | 입력 토큰 **-79%**, 호출 수 **-80%** |
+| 검증 도입으로 같은 자료를 두 번씩 전송 | Prompt Caching (자료를 캐시 가능한 프리픽스로 재배치) | 입력 토큰 **3,660 → 34**, 비용 **-52%** |
+| 독립적인 호출을 순차 대기 | asyncio 병렬 처리 | 6건 처리 **26.6초 → 14.0초 (-47%)** |
+
+### 검증 항목별 판정 정확도
+
+Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합격 처리하는 문제가 있었습니다.
+각 기준의 판정 범위를 프롬프트에 명시해 해결했습니다.
+
+| 케이스 | 개선 전 | 개선 후 | 의도 |
+|---|---|---|---|
+| 비교 질문 | G✗ C✗ S✗ | G✓ C✗ S✗ | S만 ✗ |
+| 복합 질문 | G✗ C✓ S✗ | G✓ C✓ S✗ | S만 ✗ |
+| 자료 밖 주제 | G✗ C✗ S✓ | G✗ C✓ S✓ | G만 ✗ |
+
+항목별 판정은 이후 자체 분류기의 학습 라벨이 되므로, 기준 간 오염을 줄이는 것이 중요했습니다.
+
+### 적용하며 확인한 제약
+
+- **Prompt Caching은 조건부로만 유효합니다.** Haiku 4.5의 최소 캐시 가능 토큰은 4,096이며, 미달 시 API가 오류 없이 무시합니다. 또한 캐시 TTL이 5분이라 매일 1건 발송 경로에서는 효과가 없고, 인덱싱처럼 연속 호출하는 구간에서만 이득입니다.
+- **캐싱과 병렬 처리는 서로 부딪힙니다.** 캐시는 첫 응답이 시작된 뒤에야 사용 가능하므로, 처음부터 전부 동시에 요청하면 모두 캐시 미스가 납니다. 첫 건만 순차로 처리해 캐시를 만든 뒤 나머지를 병렬화했습니다.
+- **RAG는 도입하지 않았습니다.** 자료를 강의 PDF에서 직접 정리한 노트로 바꾸면서 자료 하나의 크기가 크게 줄었고, 키워드 기반 출제가 "배운 범위 안에서만 출제"라는 RAG의 목적을 이미 해결했기 때문입니다. 로그상 토큰·지연이 실제 부담이 되는 시점에 재검토할 조건부 항목으로 두었습니다.
 
 <br>
 
@@ -158,13 +199,21 @@ uv run python scripts/index.py --quiz 10
 | SQLite 저장 | ✅ |
 | 인덱싱 스크립트 통합 | ✅ |
 
+### Phase 2~3 — 고도화 및 검증
+
+| 작업 | 상태 |
+|---|---|
+| 배치 생성 | ✅ |
+| Claude Validator | ✅ |
+| Prompt Caching | ✅ |
+| 비동기 병렬 처리 | ✅ |
+| 프롬프트 안정화 / 자료 원문 정리 | 진행 예정 |
+
 ### 이후
 
 | Phase | 내용 | 상태 |
 |---|---|---|
-| Phase 2 | 생성 고도화 (few-shot으로 난이도 고정) | 예정 |
-| Phase 3-A | Claude Validator 구축 | 예정 |
-| Phase 4 | 발송 (스케줄러 / 디스코드 / 이메일) — **MVP 완료 지점** | 예정 |
+| Phase 4 | 발송 및 배포 (스케줄러 / 디스코드 / 이메일 / Docker) — **MVP 완료 지점** | 예정 |
 | Phase 3-B | 자체 분류기를 1차 필터로 배치 | MVP 이후 |
 | Phase 5 | 웹페이지, 구독 관리, CI/CD | 예정 |
 | Phase 6 | 개인화, Spaced Repetition | 선택 |
@@ -176,14 +225,17 @@ uv run python scripts/index.py --quiz 10
 | 영역 | 사용 기술 | 도입 시점 |
 |---|---|---|
 | Backend | Python, uv | 완료 |
-| LLM | Anthropic Claude API | 완료 |
+| LLM | Anthropic Claude API (Haiku) | 완료 |
 | 자료 읽기 | Markdown (표준 파일 IO) | 완료 |
 | Database | SQLite | 완료 |
-| Validator | Claude API → 자체 분류기(PyTorch) 하이브리드 | Phase 3 |
+| 검증 | Claude API (LLM-as-a-Judge) | 완료 |
+| 비동기 | asyncio, AsyncAnthropic | 완료 |
+| 1차 필터 | 자체 학습 분류기 (PyTorch + transformers) | Phase 3-B |
 | Scheduler | APScheduler | Phase 4 |
 | Notification | discord.py, Resend | Phase 4 |
 | Web | FastAPI, Jinja2 | Phase 5 |
-| Infra | Docker, Docker Compose | Phase 4~5 |
+| Infra | Docker, Docker Compose | Phase 4 |
+| Hosting | Oracle Cloud Free Tier | Phase 4 |
 | CI/CD | GitHub Actions | Phase 5 |
 
 <br>
