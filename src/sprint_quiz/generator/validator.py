@@ -1,14 +1,14 @@
 import json
 import os
 
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 from dotenv import load_dotenv
 
 from sprint_quiz.logger import log_call, Timer
 
 load_dotenv()
 
-client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 # 판별은 생성보다 쉬운 태스크라 같은 Haiku로 충분하다.
 # (Phase 3-B에서 이 판정 결과가 자체 분류기의 학습 라벨이 된다)
@@ -58,7 +58,7 @@ VALIDATOR_SYSTEM_PROMPT = """당신은 AI/ML 복습 질문의 품질을 검증�
 }"""
 
 
-def validate_quiz(
+async def validate_quiz(
         content: str,
         quiz: dict,
         recent_questions: list[str] | None = None
@@ -79,7 +79,7 @@ def validate_quiz(
 
 
     with Timer() as timer:
-        response = client.messages.create(
+        response = await client.messages.create(
             model=MODEL,
             max_tokens=500,
             system=[

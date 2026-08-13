@@ -77,3 +77,15 @@
 2026-08-13T15:01:44,quiz_validate,claude-haiku-4-5-20251001,218,55,0,6488,1446,True,0,Edge
 2026-08-13T15:01:46,quiz_generate,claude-haiku-4-5-20251001,44,253,0,6118,2528,True,0,HOG(Histogram of Oriented Gradients)
 2026-08-13T15:01:47,quiz_validate,claude-haiku-4-5-20251001,305,55,0,6488,1055,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T15:36:20,quiz_generate,claude-haiku-4-5-20251001,34,254,6118,0,3500,True,0,CNN
+2026-08-13T15:36:22,quiz_validate,claude-haiku-4-5-20251001,268,55,6488,0,1103,True,0,CNN
+2026-08-13T15:36:24,quiz_generate,claude-haiku-4-5-20251001,44,214,0,6118,2156,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T15:36:24,quiz_generate,claude-haiku-4-5-20251001,34,203,0,6118,2354,True,0,Edge
+2026-08-13T15:36:24,quiz_generate,claude-haiku-4-5-20251001,41,265,0,6118,2834,True,0,완전연결층(FCN)
+2026-08-13T15:36:25,quiz_validate,claude-haiku-4-5-20251001,250,55,0,6488,1260,True,0,HOG(Histogram of Oriented Gradients)
+2026-08-13T15:36:25,quiz_validate,claude-haiku-4-5-20251001,227,55,0,6488,1086,True,0,Edge
+2026-08-13T15:36:26,quiz_validate,claude-haiku-4-5-20251001,296,55,0,6488,1187,True,0,완전연결층(FCN)
+2026-08-13T15:36:28,quiz_generate,claude-haiku-4-5-20251001,41,238,0,6118,2525,True,0,합성곱(Convolution)
+2026-08-13T15:36:28,quiz_generate,claude-haiku-4-5-20251001,44,270,0,6118,2907,True,0,데이터 증강(Data Augmentation)
+2026-08-13T15:36:29,quiz_validate,claude-haiku-4-5-20251001,314,55,0,6488,1106,True,0,합성곱(Convolution)
+2026-08-13T15:36:30,quiz_validate,claude-haiku-4-5-20251001,331,55,0,6488,1718,True,0,데이터 증강(Data Augmentation)
