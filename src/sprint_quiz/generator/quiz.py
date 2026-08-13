@@ -1,13 +1,13 @@
 import json
 import os
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 from dotenv import load_dotenv
 
 from sprint_quiz.logger import log_call, Timer
 
 load_dotenv()
 
-client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 MODEL = "claude-haiku-4-5-20251001"
 
@@ -41,11 +41,11 @@ SYSTEM_PROMPT = """당신은 AI/ML 부트캠프 학생을 위한 복습 질문�
   "keywords": ["답변에 포함되면 좋을 핵심 단어 3개"]
 }"""
 
-def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "") -> dict:
+async def generate_quiz(content: str, keyword: str, topic: str = "", source: str = "") -> dict:
     """지정한 키워드에 대한 복습 질문과 모범 답안을 생성한다."""
 
     with Timer() as timer:
-        response = client.messages.create(
+        response = await client.messages.create(
             model=MODEL,
             max_tokens=1000,
             system=[
@@ -144,7 +144,7 @@ items 배열의 순서는 요청받은 키워드 순서와 같아야 합니다.
   ]
 }"""
 
-def generate_quiz_batch(
+async def generate_quiz_batch(
         content: str,
         keywords: list[dict],
         source: str = ""
@@ -165,7 +165,7 @@ def generate_quiz_batch(
     )
 
     with Timer() as timer:
-        response = client.messages.create(
+        response = await client.messages.create(
             model=MODEL,
             max_tokens=500 * len(keywords) + 500,
             system=[
