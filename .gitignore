@@ -9,4 +9,4 @@ data/sample/*
 .pytest_cache/
 *.egg-info/
 sprint_quiz.db
-llm_calls.csv
+logs/
