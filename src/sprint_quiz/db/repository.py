@@ -136,3 +136,46 @@ def get_recent_questions(limit: int = 10) -> list[str]:
         )
 
         return [row["question"] for row in cur.fetchall()]
+
+
+def add_subscriber(channel: str, address: str) -> int | None:
+    """구독자를 등록한다. 이미 있으면 None을 반환한다."""
+    with get_connection() as conn:
+        try:
+            cur = conn.execute(
+                "INSERT INTO subscribers (channel, address) VALUES (?, ?)",
+                (channel, address),
+            )
+            return cur.lastrowid
+        except sqlite3.IntegrityError:
+            # (channel, address) UNIQUE 위반 = 이미 등록된 구독자
+            return None
+
+def get_active_subscribers(channel: str) -> list[sqlite3.Row]:
+    """활성 구독자 목록을 채널별로 가져온다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+             "SELECT * FROM subscribers WHERE channel = ? AND is_active = 1",
+             (channel,)
+        )
+        return cur.fetchall()
+
+def get_next_pending_quiz() -> sqlite3.Row | None:
+    """발송하지 않은 질문 중 가장 오래된 것 하나를 가져온다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT * FROM quizzes WHERE status = 'pending' ORDER BY id LIMIT 1"
+        )
+        return cur.fetchone()
+
+def mark_quiz_sent(quiz_id: int) -> None:
+    """질문을 발송 완료로 표시한다."""
+    with get_connection() as conn:
+        conn.execute(
+            """
+            UPDATE quizzes
+            SET status = 'sent', sent_at = datetime('now', 'localtime')
+            WHERE id = ?
+            """,
+            (quiz_id,),
+        )
