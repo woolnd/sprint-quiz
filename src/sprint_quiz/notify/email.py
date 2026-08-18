@@ -28,42 +28,66 @@ FROM_ADDRESS = "Sprint Quiz <onboarding@resend.dev>"
 def format_email_html(quiz) -> str:
     """이메일 본문을 HTML로 만든다.
 
-    Args:
-        quiz: quizzes 테이블의 한 행 (question, answer, topic, keywords_hint)
-
-    Returns:
-        인라인 스타일이 적용된 HTML 문자열
+    다크모드 대응:
+    - color-scheme 메타 태그로 다크모드를 인지한다고 알린다
+    - prefers-color-scheme 미디어쿼리 (Apple Mail 등에서 동작)
+    - 배경색과 글자색을 명시해 클라이언트가 임의로 반전시킬 여지를 줄인다
     """
-
     try:
         hints = json.loads(quiz["keywords_hint"] or "[]")
     except json.JSONDecodeError:
         hints = []
 
     hints_html = (
-        f'<p style="color:#666;font-size:13px;">💡 핵심 단어: {", ".join(hints)}</p>'
+        f'<p class="sub" style="color:#666666;font-size:13px;">'
+        f'💡 핵심 단어: {", ".join(hints)}</p>'
         if hints
         else ""
     )
 
-    # 이메일 클라이언트는 <style> 태그나 외부 CSS를 무시하는 경우가 많아
-    # 각 태그에 인라인 스타일로 직접 넣는다
-    return f"""
-    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;">
-      <p style="color:#888;font-size:13px;">📚 오늘의 복습 질문 · {quiz['topic']}</p>
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- 이 메일이 라이트/다크 양쪽을 지원한다고 클라이언트에 알린다.
+       이게 없으면 일부 클라이언트가 강제로 색을 반전시킨다. -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <style>
+    /* Apple Mail, iOS Mail 등 미디어쿼리를 지원하는 클라이언트에서 동작한다.
+       Gmail은 미디어쿼리를 무시하고 자체 반전 로직을 쓴다. */
+    @media (prefers-color-scheme: dark) {{
+      .wrapper {{ background-color: #1a1a1a !important; }}
+      .body    {{ color: #e8e8e8 !important; }}
+      .sub     {{ color: #a0a0a0 !important; }}
+      .divider {{ border-color: #444444 !important; }}
+    }}
+  </style>
+</head>
+<body style="margin:0;padding:0;">
+  <div class="wrapper" style="background-color:#ffffff;padding:24px 0;">
+    <div class="body" style="font-family:sans-serif;max-width:480px;
+                             margin:0 auto;padding:0 16px;color:#1a1a1a;">
 
-      <h2 style="margin-top:8px;">{quiz['question']}</h2>
+      <p class="sub" style="color:#888888;font-size:13px;margin:0;">
+        📚 오늘의 복습 질문 · {quiz['topic']}
+      </p>
 
-      <p style="color:#999;font-size:13px;margin-top:32px;">
+      <h2 style="margin:8px 0 0 0;">{quiz['question']}</h2>
+
+      <p class="sub" style="color:#999999;font-size:13px;margin-top:32px;">
         먼저 스스로 떠올려본 뒤 아래 답변을 확인해보세요.
       </p>
 
-      <hr style="border:none;border-top:1px solid #ddd;margin:16px 0;">
+      <hr class="divider" style="border:none;border-top:1px solid #dddddd;margin:16px 0;">
 
-      <p style="font-weight:bold;">A. {quiz['answer']}</p>
+      <p style="font-weight:bold;margin:0;">A. {quiz['answer']}</p>
       {hints_html}
+
     </div>
-    """
+  </div>
+</body>
+</html>"""
 
 
 def send_quiz_email(to_address: str, quiz) -> None:
