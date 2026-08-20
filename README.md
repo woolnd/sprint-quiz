@@ -69,6 +69,10 @@ Q. ReLU에 대해서 설명해주세요.
 **발송 전에 검증한다**
 LLM이 만든 답변이 그대로 전달되는 구조이므로, 틀린 설명이 나가지 않도록 발송 전 검증 단계를 둡니다. 통과하지 못한 질문은 재생성합니다.
 
+**최종 결정은 사람이 한다**
+Validator를 통과해도 바로 발송하지 않습니다. 승인된 질문만 발송 큐에 들어갑니다.
+매일 검토하는 방식은 하루만 바빠도 발송이 멈추므로, **미리 여러 건을 승인해두고 큐에서 하나씩 꺼내는 구조**로 만들었습니다. 검토 빈도와 발송 빈도를 분리해 사람의 일정이 서비스 가동에 영향을 주지 않게 했습니다.
+
 <br>
 
 ## 동작 흐름
@@ -103,9 +107,20 @@ Notion 정리 글 → Markdown 내보내기 → data/
             통과            불합격 → 재생성
               │
               ▼
-       문제은행 저장 (전날 밤 생성)
+      문제은행 (validated)
               │
               ▼
+   ┌────────────────────────┐
+   │  관리자 페이지에서 일괄 검토 │
+   └───────────┬────────────┘
+               │
+       ┌───────┴────────┐
+     승인             반려 → rejected
+       │                  (부정 라벨로 축적)
+       ▼
+  발송 큐 (approved)
+       │
+       ▼
         스케줄러 (매일 08:00 발송)
               │
       ┌───────┴────────┐
@@ -199,7 +214,7 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | SQLite 저장 | ✅ |
 | 인덱싱 스크립트 통합 | ✅ |
 
-### Phase 2~3 — 고도화 및 검증
+### Phase 2~3 — 고도화 및 검증 ✅ 완료
 
 | 작업 | 상태 |
 |---|---|
@@ -207,15 +222,25 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | Claude Validator | ✅ |
 | Prompt Caching | ✅ |
 | 비동기 병렬 처리 | ✅ |
-| 프롬프트 안정화 / 자료 원문 정리 | 진행 예정 |
+
+### Phase 4 — 발송 및 배포 (**MVP 완료 지점**)
+
+| 작업 | 상태 |
+|---|---|
+| 이메일 발송 (Resend) | ✅ |
+| FastAPI 앱 + 서비스 소개 페이지 | 진행 중 |
+| 답변 확인 페이지 | 예정 |
+| 관리자 승인 페이지 | 예정 |
+| 스케줄러 (매일 08:00) | 예정 |
+| 디스코드 봇 + 답변 확인 버튼 | 예정 |
+| Docker + Oracle Cloud 배포 | 예정 |
 
 ### 이후
 
 | Phase | 내용 | 상태 |
 |---|---|---|
-| Phase 4 | 발송 및 배포 (스케줄러 / 디스코드 / 이메일 / Docker) — **MVP 완료 지점** | 예정 |
 | Phase 3-B | 자체 분류기를 1차 필터로 배치 | MVP 이후 |
-| Phase 5 | 웹페이지, 구독 관리, CI/CD | 예정 |
+| Phase 5 | 구독 등록/해지 페이지, 자료 업로드, CI/CD | 예정 |
 | Phase 6 | 개인화, Spaced Repetition | 선택 |
 
 <br>
@@ -232,8 +257,8 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | 비동기 | asyncio, AsyncAnthropic | 완료 |
 | 1차 필터 | 자체 학습 분류기 (PyTorch + transformers) | Phase 3-B |
 | Scheduler | APScheduler | Phase 4 |
-| Notification | discord.py, Resend | Phase 4 |
-| Web | FastAPI, Jinja2 | Phase 5 |
+| Notification | Resend (완료), discord.py | Phase 4 |
+| Web | FastAPI, Jinja2 | Phase 4 |
 | Infra | Docker, Docker Compose | Phase 4 |
 | Hosting | Oracle Cloud Free Tier | Phase 4 |
 | CI/CD | GitHub Actions | Phase 5 |
