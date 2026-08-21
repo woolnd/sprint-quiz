@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sprint Quiz{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    {# 각 페이지가 이 자리를 채운다 #}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>Sprint Quiz</p>
+  </footer>
+</body>
+</html>

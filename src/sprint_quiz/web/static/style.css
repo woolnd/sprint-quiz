@@ -1,0 +1,178 @@
+/* ============================================
+   색상 변수
+   한 곳에서 관리하고, 다크모드에서는 값만 바꾼다.
+   ============================================ */
+:root {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --text-sub: #666666;
+  --border: #e0e0e0;
+  --card-bg: #f7f9fb;
+
+  /* 하늘색 계열 — 용도별로 톤을 나눈다.
+     하늘색은 밝아서 흰 배경 위 텍스트로 쓰면 대비가 부족하기 때문이다. */
+  --accent: #0284c7;        /* 링크·강조 텍스트 (흰 배경에서 읽히는 진한 톤) */
+  --accent-strong: #0369a1; /* 버튼 배경 등 그 위에 흰 글씨를 올릴 때 */
+  --accent-soft: #e0f2fe;   /* 카드·하이라이트용 옅은 배경 */
+}
+
+/* 웹에서는 prefers-color-scheme이 정상 동작한다.
+   (이메일 클라이언트와 달리 브라우저는 이 미디어쿼리를 제대로 지원한다) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --text: #e8eaed;
+    --text-sub: #9aa0a6;
+    --border: #2c2f36;
+    --card-bg: #1c1f24;
+
+    /* 어두운 배경에서는 반대로 밝은 하늘색이 잘 보인다 */
+    --accent: #38bdf8;
+    --accent-strong: #7dd3fc;
+    --accent-soft: #0c2a3d;
+  }
+}
+
+/* ============================================
+   기본 레이아웃
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "Noto Sans KR", sans-serif;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--text);
+}
+
+main {
+  /* 640px은 글을 읽기 편한 폭이다.
+     화면이 좁아지면 자동으로 줄어들어 별도 처리 없이 반응형이 된다. */
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+/* ============================================
+   헤더
+   ============================================ */
+.hero {
+  padding-bottom: 8px;
+  /* 상단 구분선에 accent를 써서 서비스 색을 첫인상에 노출한다 */
+  border-bottom: 2px solid var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+}
+
+.tagline {
+  color: var(--text-sub);
+  margin-top: 8px;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+/* ============================================
+   이메일 미리보기 카드
+   서비스의 핵심 화면이므로 accent 색으로 도드라지게 한다.
+   ============================================ */
+.preview {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.preview-meta {
+  color: var(--text-sub);
+  font-size: 13px;
+  margin: 0;
+}
+
+.preview-question {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 12px 0;
+  color: var(--accent);
+}
+
+.preview-hint {
+  color: var(--text-sub);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ============================================
+   기타 요소
+   ============================================ */
+.steps {
+  padding-left: 20px;
+}
+
+.steps li {
+  margin-bottom: 8px;
+}
+
+a {
+  color: var(--accent);
+}
+
+footer {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  border-top: 1px solid var(--border);
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+/* ============================================
+   모바일 대응 (화면 폭 480px 이하)
+   구조는 그대로 두고 여백과 글자 크기만 조정한다.
+   레이아웃이 세로 한 줄로 쌓이는 형태라 무너질 여지가 적다.
+   ============================================ */
+@media (max-width: 480px) {
+  main {
+    /* 좁은 화면에서는 상하 여백을 줄이고,
+       좌우는 늘려 글자가 화면 끝에 붙지 않게 한다 */
+    padding: 32px 18px;
+  }
+
+  section {
+    margin-bottom: 36px;
+  }
+
+  .hero h1 {
+    /* 32px은 좁은 화면에서 두 줄로 넘어갈 수 있다 */
+    font-size: 26px;
+  }
+
+  .preview {
+    padding: 16px;
+  }
+
+  .preview-question {
+    font-size: 16px;
+  }
+
+  footer {
+    padding: 20px 18px 36px;
+  }
+}
