@@ -1,62 +1,78 @@
 {% extends "base.html" %}
-
-{# 내비게이션에서 '홈'을 활성 상태로 표시 #}
 {% set active = 'home' %}
-
 {% block title %}Sprint Quiz - 매일 아침 8시 복습{% endblock %}
 
 {% block content %}
 <main class="flex-grow">
 
 <!-- ══════════ Hero ══════════ -->
-<section class="hero-bg py-3xl px-margin-mobile md:px-lg relative overflow-hidden flex items-center min-h-[80vh]">
+<section class="hero-bg py-4xl px-margin-mobile md:px-lg relative overflow-hidden flex items-center min-h-[819px]">
 <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-2xl items-center relative z-10">
 
-<div class="flex flex-col gap-xl">
-<h1 class="text-display-lg font-display-lg md:text-[56px] leading-tight font-black text-on-background">
+<div class="flex flex-col gap-xl reveal-on-scroll is-revealed">
+<h1 class="text-display-lg font-display-lg md:text-[56px] leading-tight font-black text-on-background tracking-tight">
     배운 걸 잊기 전에<br/>다시 꺼내는 <span class="text-primary">매일 8시 복습</span>
 </h1>
-<p class="text-body-lg font-body-lg text-on-surface-variant max-w-lg">
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-lg leading-relaxed">
     부트캠프에서 배운 AI/ML 개념, 진도에 밀려 그냥 지나가고 있지 않나요.
     매일 아침 한 문제씩 보내드릴게요. 메일 주소만 남기면 됩니다.
 </p>
 
 <!-- 구독 폼 (Phase 5에서 실제 등록 처리 연결 예정) -->
 <div class="flex flex-col sm:flex-row gap-md mt-sm">
-<div class="flex-grow max-w-md bg-surface-container-lowest rounded-lg border border-outline-variant p-1 flex items-center">
+<div class="flex-grow max-w-md bg-surface-container-lowest rounded-2xl p-2 flex items-center transition-shadow shadow-[0_8px_30px_rgb(0,0,0,0.06)] focus-within:shadow-[0_8px_30px_rgb(0,40,142,0.15)]">
 <span class="material-symbols-outlined text-outline px-3">mail</span>
 <input class="flex-grow bg-transparent border-none focus:ring-0 text-body-md font-body-md py-2 outline-none" placeholder="이메일 주소를 입력하세요" type="email"/>
 </div>
-<button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-label-md text-label-md hover:bg-surface-tint transition-colors shadow-sm whitespace-nowrap">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-2xl font-label-md text-label-md hover:bg-surface-tint hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 whitespace-nowrap">
     무료로 시작하기
 </button>
 </div>
 
-<div class="flex items-center gap-2 text-caption font-caption text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">check_circle</span>
+<div class="flex items-center gap-2 text-caption font-caption text-on-surface-variant mt-2">
+<span class="material-symbols-outlined text-sm text-tertiary-container">check_circle</span>
 <span>디스코드 연동 지원</span>
 </div>
 </div>
 
-<!-- 오른쪽: 실제 발송되는 질문 카드 목업 -->
-<div class="relative hidden md:block h-full min-h-[400px]">
-<div class="absolute inset-0 bg-surface-container-high rounded-2xl rotate-3 shadow-lg"></div>
-<div class="absolute inset-0 bg-surface-container-lowest rounded-2xl -rotate-1 shadow-sm border border-outline-variant p-xl flex flex-col gap-lg">
-<div class="flex items-center justify-between border-b border-outline-variant pb-md">
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-error"></div>
-<div class="w-3 h-3 rounded-full bg-surface-tint"></div>
-<div class="w-3 h-3 rounded-full bg-tertiary-container"></div>
+<!-- 오른쪽: 실제 발송되는 질문 카드 (hover 시 뒤집혀 답안 노출) -->
+<div class="relative hidden md:block h-full min-h-[450px] reveal-on-scroll animate-float is-revealed" style="transition-delay: 200ms;">
+<div class="absolute inset-0 bg-primary-fixed/30 rounded-3xl rotate-6 shadow-xl backdrop-blur-sm"></div>
+<div class="absolute inset-0 bg-surface-container-high rounded-3xl -rotate-3 shadow-lg"></div>
+<div class="absolute inset-0 flip-card cursor-pointer">
+<div class="flip-card-inner h-full w-full rounded-3xl shadow-2xl">
+
+<!-- Front : 질문 -->
+<div class="flip-card-front bg-gradient-to-br from-white to-primary-fixed/20 border-none rounded-3xl flex-col gap-lg shadow-[0_10px_40px_rgb(0,0,0,0.08)]">
+<div class="flex items-center justify-between pb-md w-full border-b border-primary-fixed/40">
+<div class="flex items-center gap-3">
+<div class="w-3.5 h-3.5 rounded-full bg-error/80 shadow-sm"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-surface-tint/80 shadow-sm"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-tertiary-container/80 shadow-sm"></div>
 </div>
-<span class="text-caption font-caption text-outline">Today's Sprint</span>
+<span class="text-caption font-caption text-outline font-semibold">Today's Sprint</span>
 </div>
-<div class="flex-grow flex flex-col justify-center items-center text-center gap-md">
-<span class="material-symbols-outlined text-primary text-4xl mb-sm">psychology</span>
-<h3 class="text-headline-md font-headline-md">ReLU에 대해서 설명해주세요.</h3>
-<p class="text-body-md font-body-md text-on-surface-variant">딥러닝 · 활성화 함수</p>
-<button class="mt-lg bg-surface-container hover:bg-surface-container-high text-primary px-6 py-2 rounded-full font-label-md transition-colors">
+<div class="flex-grow flex flex-col justify-center items-center text-center gap-md px-4">
+<span class="material-symbols-outlined text-primary text-5xl mb-sm opacity-80">psychology</span>
+<h3 class="text-headline-md font-headline-md leading-relaxed">ReLU에 대해서 설명해주세요.</h3>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">딥러닝 · 활성화 함수</p>
+<div class="mt-lg bg-white/80 backdrop-blur-sm text-primary px-8 py-3 rounded-2xl font-label-md shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
     답변 확인하기
-</button>
+</div>
+</div>
+</div>
+
+<!-- Back : 모범 답안 -->
+<div class="flip-card-back bg-gradient-to-br from-surface to-surface-container-low border-none rounded-3xl flex-col gap-md shadow-[0_10px_40px_rgb(0,0,0,0.08)]">
+<span class="px-4 py-2 bg-tertiary-fixed/80 text-on-tertiary-fixed rounded-2xl text-caption font-caption self-start shadow-sm font-semibold">모범 답안</span>
+<div class="flex-grow overflow-y-auto text-left w-full text-body-md font-body-md text-on-surface-variant space-y-md scrollbar-hide px-2">
+<p class="leading-relaxed">입력이 0보다 크면 그 값을 그대로, 0 이하면 0을 출력하는 활성화 함수입니다.</p>
+<p class="leading-relaxed">계산이 단순해 학습이 빠르고, 시그모이드와 달리 양수 구간에서 기울기가 1로 유지되어 기울기 소실 문제를 완화해줍니다.</p>
+<p class="leading-relaxed">다만 입력이 계속 음수면 기울기가 0이 되어 뉴런이 학습되지 않는 dying ReLU 문제가 있습니다.</p>
+<p class="text-caption font-caption text-outline pt-sm">핵심 단어 · 활성화 함수, 기울기 소실, dying ReLU</p>
+</div>
+</div>
+
 </div>
 </div>
 </div>
@@ -65,46 +81,48 @@
 </section>
 
 <!-- ══════════ Features : 구독 → 수신 → 복습 ══════════ -->
-<section class="py-3xl px-margin-mobile md:px-lg bg-surface" id="features">
-<div class="max-w-container-max mx-auto">
-<div class="text-center mb-2xl">
-<h2 class="text-headline-lg font-headline-lg text-on-background mb-md">판단과 행동의 부담을 대신 진다</h2>
-<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">
+<section class="py-4xl px-margin-mobile md:px-lg bg-surface relative" id="features">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-container-low/30 pointer-events-none"></div>
+<div class="max-w-container-max mx-auto relative z-10">
+
+<div class="text-center mb-3xl reveal-on-scroll is-revealed">
+<h2 class="text-headline-lg font-headline-lg text-on-background mb-lg tracking-tight">판단과 행동의 부담을 대신 진다</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
     무엇을 복습할지 고르고, 질문을 만드는 과정은 저희가 할게요. 여러분은 아침에 도착한 질문 하나만 보시면 됩니다.
 </p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-2xl">
 
 <!-- 1. 구독 -->
-<div class="bg-surface-container-lowest rounded-xl p-xl shadow-sm border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
-<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-lg">
-<span class="material-symbols-outlined text-on-primary-fixed text-3xl">mail</span>
+<div class="bg-surface-container-lowest rounded-3xl p-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-none flex flex-col items-center text-center hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] hover:-translate-y-3 transition-all duration-500 reveal-on-scroll is-revealed group">
+<div class="w-20 h-20 rounded-3xl bg-primary-fixed/50 flex items-center justify-center mb-xl group-hover:scale-110 transition-transform duration-500 shadow-inner">
+<span class="material-symbols-outlined text-on-primary-fixed text-4xl">mail</span>
 </div>
-<h3 class="text-headline-md font-headline-md mb-sm">1. 이메일만 남기면 끝</h3>
-<p class="text-body-md font-body-md text-on-surface-variant">
+<h3 class="text-headline-md font-headline-md mb-md">1. 이메일만 남기면 끝</h3>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
     가입도, 설치도 없습니다. 메일 주소 하나만 등록하면 다음 날 아침부터 질문이 도착합니다.
 </p>
 </div>
 
 <!-- 2. 수신 -->
-<div class="bg-surface-container-lowest rounded-xl p-xl shadow-sm border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
-<div class="w-16 h-16 rounded-full bg-secondary-fixed flex items-center justify-center mb-lg">
-<span class="material-symbols-outlined text-on-secondary-fixed text-3xl">schedule</span>
+<div class="bg-surface-container-lowest rounded-3xl p-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-none flex flex-col items-center text-center hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] hover:-translate-y-3 transition-all duration-500 reveal-on-scroll is-revealed group" style="transition-delay: 100ms;">
+<div class="w-20 h-20 rounded-3xl bg-secondary-fixed/50 flex items-center justify-center mb-xl group-hover:scale-110 transition-transform duration-500 shadow-inner">
+<span class="material-symbols-outlined text-on-secondary-fixed text-4xl">schedule</span>
 </div>
-<h3 class="text-headline-md font-headline-md mb-sm">2. 매일 아침 8시 도착</h3>
-<p class="text-body-md font-body-md text-on-surface-variant">
+<h3 class="text-headline-md font-headline-md mb-md">2. 매일 아침 8시 도착</h3>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
     출근길, 등굣길에 가볍게 읽을 수 있도록 하루 한 문제씩 보내드립니다. 밀리지 않는 분량입니다.
 </p>
 </div>
 
 <!-- 3. 복습 -->
-<div class="bg-surface-container-lowest rounded-xl p-xl shadow-sm border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
-<div class="w-16 h-16 rounded-full bg-tertiary-fixed flex items-center justify-center mb-lg">
-<span class="material-symbols-outlined text-on-tertiary-fixed text-3xl">psychology</span>
+<div class="bg-surface-container-lowest rounded-3xl p-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-none flex flex-col items-center text-center hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] hover:-translate-y-3 transition-all duration-500 reveal-on-scroll is-revealed group" style="transition-delay: 200ms;">
+<div class="w-20 h-20 rounded-3xl bg-tertiary-fixed/50 flex items-center justify-center mb-xl group-hover:scale-110 transition-transform duration-500 shadow-inner">
+<span class="material-symbols-outlined text-on-tertiary-fixed text-4xl">psychology</span>
 </div>
-<h3 class="text-headline-md font-headline-md mb-sm">3. 떠올리고, 확인하기</h3>
-<p class="text-body-md font-body-md text-on-surface-variant">
+<h3 class="text-headline-md font-headline-md mb-md">3. 떠올리고, 확인하기</h3>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
     답을 제출하지 않습니다. 스스로 떠올려본 뒤 답안을 열어 확인하면 그날 복습은 끝입니다.
 </p>
 </div>
@@ -114,53 +132,59 @@
 </section>
 
 <!-- ══════════ 복습 방식 + 뒤집히는 카드 ══════════ -->
-<section class="py-3xl px-margin-mobile md:px-lg bg-surface-container-low">
-<div class="max-w-container-max mx-auto flex flex-col md:flex-row items-center gap-2xl">
+<section class="py-4xl px-margin-mobile md:px-lg bg-gradient-to-b from-surface-container-low to-surface">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row items-center gap-3xl">
 
-<div class="flex-1">
-<h2 class="text-headline-lg font-headline-lg text-on-background mb-md">이렇게 복습하게 됩니다</h2>
-<p class="text-body-lg font-body-lg text-on-surface-variant mb-xl">
+<div class="flex-1 reveal-on-scroll is-revealed">
+<h2 class="text-headline-lg font-headline-lg text-on-background mb-lg tracking-tight">이렇게 복습하게 됩니다</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant mb-2xl leading-relaxed">
     질문을 보고 먼저 스스로 답을 떠올려보세요. 그 다음 답안을 열어 내 설명과 비교하면 됩니다.
     떠올리려 애쓰는 그 시간이 기억에 남습니다.
 </p>
-<ul class="flex flex-col gap-md text-body-md font-body-md text-on-surface-variant">
-<li class="flex items-center gap-sm">
+<ul class="flex flex-col gap-lg text-body-lg font-body-lg text-on-surface-variant">
+<li class="flex items-center gap-md hover:translate-x-2 transition-transform duration-300 bg-white/50 p-4 rounded-2xl shadow-[0_4px_15px_rgb(0,0,0,0.02)] border border-white">
+<div class="bg-primary/10 p-2 rounded-xl flex items-center justify-center">
 <span class="material-symbols-outlined text-primary">check</span>
-<span>개념 하나를 한 문장으로 묻는 간단한 질문</span>
+</div>
+<span class="leading-relaxed">개념 하나를 한 문장으로 묻는 간단한 질문</span>
 </li>
-<li class="flex items-center gap-sm">
+<li class="flex items-center gap-md hover:translate-x-2 transition-transform duration-300 bg-white/50 p-4 rounded-2xl shadow-[0_4px_15px_rgb(0,0,0,0.02)] border border-white">
+<div class="bg-primary/10 p-2 rounded-xl flex items-center justify-center">
 <span class="material-symbols-outlined text-primary">check</span>
-<span>비교·응용 없이 "무엇인가"만 확인</span>
+</div>
+<span class="leading-relaxed">비교·응용 없이 "무엇인가"만 확인</span>
 </li>
-<li class="flex items-center gap-sm">
+<li class="flex items-center gap-md hover:translate-x-2 transition-transform duration-300 bg-white/50 p-4 rounded-2xl shadow-[0_4px_15px_rgb(0,0,0,0.02)] border border-white">
+<div class="bg-primary/10 p-2 rounded-xl flex items-center justify-center">
 <span class="material-symbols-outlined text-primary">check</span>
-<span>발송 전 사람이 한 번 더 검토한 질문만</span>
+</div>
+<span class="leading-relaxed">발송 전 사람이 한 번 더 검토한 질문만</span>
 </li>
 </ul>
 </div>
 
-<!-- 마우스를 올리면 뒤집히는 카드 (스타일은 style.css의 .flip-card) -->
-<div class="flex-1 w-full max-w-md aspect-[4/3] flip-card cursor-pointer">
-<div class="flip-card-inner rounded-xl shadow-sm">
+<!-- 마우스를 올리면 뒤집히는 카드 -->
+<div class="flex-1 w-full max-w-lg aspect-[4/3] flip-card cursor-pointer reveal-on-scroll is-revealed" style="transition-delay: 200ms;">
+<div class="flip-card-inner rounded-3xl shadow-2xl">
 
-<!-- 앞면 : 질문 -->
-<div class="flip-card-front bg-surface-container-lowest border border-outline-variant rounded-xl flex-col shadow-sm">
-<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed rounded-full text-caption font-caption mb-auto self-start">딥러닝</span>
+<!-- Front : 질문 -->
+<div class="flip-card-front bg-gradient-to-br from-white to-secondary-fixed/20 border-none rounded-3xl flex-col shadow-[0_15px_50px_rgb(0,0,0,0.08)] p-10">
+<span class="px-4 py-2 bg-primary-fixed/80 text-on-primary-fixed rounded-2xl text-caption font-caption mb-auto self-start shadow-sm font-semibold">딥러닝</span>
 <div class="flex-grow flex flex-col justify-center items-center w-full">
-<span class="material-symbols-outlined text-outline text-4xl mb-md">help_center</span>
-<h4 class="text-headline-md font-headline-md text-on-surface text-center">ReLU에 대해서 설명해주세요.</h4>
+<span class="material-symbols-outlined text-primary/40 text-6xl mb-lg">help_center</span>
+<h4 class="text-headline-md font-headline-md text-on-surface text-center leading-relaxed">Max Pooling에 대해서 설명해주세요.</h4>
 </div>
-<span class="text-caption font-caption text-outline mt-auto">마우스를 올려 답안 확인</span>
+<span class="text-caption font-caption text-primary/60 mt-auto bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm">마우스를 올려 답안 확인</span>
 </div>
 
-<!-- 뒷면 : 모범 답안 -->
-<div class="flip-card-back bg-surface border border-outline-variant rounded-xl flex-col shadow-sm">
-<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-caption font-caption mb-md self-start">모범 답안</span>
-<div class="flex-grow overflow-y-auto text-left w-full text-body-md font-body-md text-on-surface-variant space-y-sm">
-<p>입력이 0보다 크면 그 값을 그대로, 0 이하면 0을 출력하는 활성화 함수입니다.</p>
-<p>계산이 단순해 학습이 빠르고, 시그모이드와 달리 양수 구간에서 기울기가 1로 유지되어 기울기 소실 문제를 완화해줍니다.</p>
-<p>다만 입력이 계속 음수면 기울기가 0이 되어 뉴런이 학습되지 않는 dying ReLU 문제가 있습니다.</p>
-<p class="text-caption font-caption text-outline pt-sm">핵심 단어 · 활성화 함수, 기울기 소실, dying ReLU</p>
+<!-- Back : 모범 답안 -->
+<div class="flip-card-back bg-gradient-to-br from-white to-tertiary-fixed/10 border-none rounded-3xl flex-col shadow-[0_15px_50px_rgb(0,0,0,0.08)] p-10">
+<span class="px-4 py-2 bg-tertiary-fixed/80 text-on-tertiary-fixed rounded-2xl text-caption font-caption mb-lg self-start shadow-sm font-semibold">모범 답안</span>
+<div class="flex-grow overflow-y-auto text-left w-full text-body-md font-body-md text-on-surface-variant space-y-md scrollbar-hide">
+<p class="leading-relaxed">Max Pooling은 특징 맵에서 지정된 영역의 최댓값만 선택하는 다운샘플링 연산입니다.</p>
+<p class="leading-relaxed">강한 특징을 강조하고 노이즈에 강하며, 동시에 특징 맵의 차원을 축소해 계산량을 줄일 수 있습니다.</p>
+<p class="leading-relaxed">학습되는 가중치가 없어서 작은 변화에도 견고한 성능을 유지합니다.</p>
+<p class="text-caption font-caption text-outline pt-sm">핵심 단어 · 다운샘플링, 최댓값, 차원 축소</p>
 </div>
 </div>
 
@@ -171,15 +195,19 @@
 </section>
 
 <!-- ══════════ CTA ══════════ -->
-<section class="py-3xl px-margin-mobile md:px-lg bg-primary text-center">
-<div class="max-w-2xl mx-auto flex flex-col items-center">
-<h2 class="text-headline-lg font-headline-lg text-on-primary mb-md">내일 아침 8시,<br/>첫 번째 질문을 받아보시겠어요?</h2>
-<p class="text-body-lg font-body-lg text-primary-fixed-dim mb-xl">
+<section class="py-4xl px-margin-mobile md:px-lg bg-primary text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary-container to-primary pointer-events-none"></div>
+<div class="absolute -top-40 -right-40 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-40 -left-40 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none"></div>
+
+<div class="max-w-2xl mx-auto flex flex-col items-center reveal-on-scroll is-revealed relative z-10">
+<h2 class="text-display-lg font-display-lg text-on-primary mb-lg tracking-tight leading-tight">내일 아침 8시,<br/>첫 번째 질문을 받아보시겠어요?</h2>
+<p class="text-body-lg font-body-lg text-primary-fixed-dim mb-2xl leading-relaxed">
     메일 주소만 남기면 됩니다. 언제든 해지할 수 있어요.
 </p>
 <div class="flex flex-col sm:flex-row gap-md w-full justify-center">
-<input class="px-lg py-4 rounded-lg bg-surface-container-lowest text-on-surface border-none focus:ring-2 focus:ring-surface-tint text-body-md w-full sm:w-auto min-w-[300px]" placeholder="이메일 주소 입력" type="email"/>
-<button class="bg-surface-container-lowest text-primary px-8 py-4 rounded-lg font-headline-md text-label-md hover:bg-surface-container-low transition-colors whitespace-nowrap shadow-sm">
+<input class="px-8 py-5 rounded-2xl bg-surface-container-lowest/95 text-on-surface border-none focus:ring-4 focus:ring-primary-fixed-dim/50 text-body-lg w-full sm:w-auto min-w-[320px] shadow-[0_8px_30px_rgb(0,0,0,0.1)] outline-none transition-all placeholder:text-outline" placeholder="이메일 주소 입력" type="email"/>
+<button class="bg-surface-container-lowest text-primary px-10 py-5 rounded-2xl font-headline-md text-body-lg hover:bg-white hover:-translate-y-1 hover:shadow-[0_15px_40px_rgb(0,0,0,0.15)] transition-all duration-300 whitespace-nowrap shadow-lg">
     지금 바로 구독하기
 </button>
 </div>

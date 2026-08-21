@@ -9,8 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
 
-<!-- Tailwind 설정.
-     CDN 방식이라 빌드 없이 이 스크립트로 토큰을 주입한다.
+<!-- Tailwind 설정. CDN 방식이라 빌드 없이 이 스크립트로 토큰을 주입한다.
      반드시 tailwindcss CDN 스크립트 뒤에 와야 한다. -->
 <script id="tailwind-config">
   tailwind.config = {
@@ -70,6 +69,8 @@
                 "DEFAULT": "0.25rem",
                 "lg": "0.5rem",
                 "xl": "0.75rem",
+                "2xl": "1rem",
+                "3xl": "1.5rem",
                 "full": "9999px"
         },
         "spacing": {
@@ -83,7 +84,8 @@
                 "md": "16px",
                 "base": "4px",
                 "3xl": "64px",
-                "lg": "24px"
+                "lg": "24px",
+                "4xl": "96px"
         },
         "fontFamily": {
                 "label-md": ["Inter"],
@@ -97,13 +99,13 @@
         },
         "fontSize": {
                 "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "600" }],
-                "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
-                "headline-lg-mobile": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
-                "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }]
+                "headline-lg": ["32px", { "lineHeight": "1.4", "letterSpacing": "0em", "fontWeight": "700" }],
+                "body-md": ["16px", { "lineHeight": "1.7", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                "display-lg": ["48px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                "caption": ["12px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                "headline-lg-mobile": ["24px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                "body-lg": ["18px", { "lineHeight": "1.7", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                "headline-md": ["24px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "600" }]
         }
       },
     },
@@ -111,27 +113,26 @@
 </script>
 
 <link href="/static/style.css" rel="stylesheet"/>
-{# 페이지별 추가 스타일이 필요하면 이 블록을 채운다 #}
 {% block head_extra %}{% endblock %}
 </head>
 
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
 <!-- TopNavBar (공통) -->
-<nav class="bg-surface border-b border-outline-variant sticky top-0 z-50 w-full h-16">
+<nav class="bg-surface/90 backdrop-blur-md border-b-0 shadow-[0_4px_20px_rgb(0,0,0,0.03)] sticky top-0 z-50 w-full h-20 transition-all">
 <div class="flex justify-between items-center w-full h-full px-margin-mobile md:px-lg max-w-container-max mx-auto">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-2xl">school</span>
+<a class="flex items-center gap-2" href="/">
+<span class="material-symbols-outlined text-primary text-3xl">school</span>
 <span class="text-headline-md font-headline-md font-black text-primary">Sprint Quiz</span>
-</div>
-<div class="hidden md:flex gap-6 items-center">
-  {# active 값에 따라 현재 메뉴에 밑줄을 준다. 각 페이지에서 set으로 지정한다. #}
+</a>
+<div class="hidden md:flex gap-8 items-center">
+  {# 각 페이지에서 {% set active = '...' %}로 현재 메뉴를 지정한다 #}
   {% set active = active|default('home') %}
   <a class="{% if active == 'home' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/">홈</a>
-  <a class="{% if active == 'about' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="#features">서비스 소개</a>
+  <a class="{% if active == 'about' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/#features">서비스 소개</a>
   <a class="{% if active == 'admin' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/admin/review">관리자 페이지</a>
 </div>
-<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-2xl font-label-md text-label-md hover:bg-surface-tint hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300">
     구독하기
 </button>
 </div>
@@ -140,20 +141,24 @@
 {% block content %}{% endblock %}
 
 <!-- Footer (공통) -->
-<footer class="bg-surface-container-highest py-3xl px-margin-mobile md:px-lg w-full mt-auto">
+<footer class="bg-surface-container-lowest py-3xl px-margin-mobile md:px-lg w-full mt-auto border-t border-surface-container-low">
 <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
 <div class="md:col-span-6 flex flex-col gap-sm">
-<span class="text-headline-md font-headline-md text-on-surface">Sprint Quiz</span>
-<p class="text-caption font-caption text-on-surface-variant">Copyright © 2026 Sprint Quiz. All rights reserved.</p>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-xl opacity-80">school</span>
+<span class="text-headline-md font-headline-md text-on-background">Sprint Quiz</span>
 </div>
-<div class="md:col-span-6 flex justify-start md:justify-end gap-lg">
-<a class="text-body-md font-body-md text-on-surface-variant hover:underline hover:text-primary transition-opacity duration-200" href="#">개인정보 처리방침</a>
-<a class="text-body-md font-body-md text-on-surface-variant hover:underline hover:text-primary transition-opacity duration-200" href="#">디스코드</a>
-<a class="text-body-md font-body-md text-on-surface-variant hover:underline hover:text-primary transition-opacity duration-200" href="mailto:wodnd0418@gmail.com">이메일</a>
+<p class="text-caption font-caption text-outline">Copyright © 2026 Sprint Quiz. All rights reserved.</p>
+</div>
+<div class="md:col-span-6 flex justify-start md:justify-end gap-xl mt-6 md:mt-0">
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">개인정보 처리방침</a>
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">디스코드</a>
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="mailto:wodnd0418@gmail.com">이메일</a>
 </div>
 </div>
 </footer>
 
+<script src="/static/main.js"></script>
 {% block body_extra %}{% endblock %}
 </body>
 </html>

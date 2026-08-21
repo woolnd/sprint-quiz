@@ -1,6 +1,7 @@
-/* Tailwind 유틸리티로 표현할 수 없는 커스텀 스타일만 여기에 둔다.
+/* Tailwind 유틸리티로 표현할 수 없는 것만 여기에 둔다.
    나머지 스타일은 전부 템플릿의 Tailwind 클래스로 처리한다. */
 
+html { scroll-behavior: smooth; }
 body { font-family: 'Inter', sans-serif; }
 
 /* 히어로 배경 그라데이션 */
@@ -16,7 +17,7 @@ body { font-family: 'Inter', sans-serif; }
 }
 
 /* ── 뒤집히는 카드 ──────────────────────────────
-   perspective를 부모에 주고, 자식을 Y축으로 180도 회전시킨다.
+   perspective를 부모에 주고 자식을 Y축으로 180도 회전시킨다.
    backface-visibility: hidden 이라 뒷면은 회전 전까지 보이지 않는다. */
 .flip-card {
     perspective: 1000px;
@@ -44,10 +45,43 @@ body { font-family: 'Inter', sans-serif; }
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 32px;
 }
 
 /* 뒷면은 미리 180도 돌려둔다 */
 .flip-card-back {
     transform: rotateY(180deg);
+}
+
+/* ── 스크롤 등장 애니메이션 ──────────────────────
+   기본은 아래로 내려가 투명한 상태이고,
+   화면에 들어오면 JS가 .is-revealed를 붙여 제자리로 올린다. */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.5, 0, 0, 1),
+                transform 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 히어로 카드가 천천히 떠 있는 느낌 */
+@keyframes float {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* 애니메이션을 줄이도록 설정한 사용자를 존중한다 */
+@media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll { opacity: 1; transform: none; transition: none; }
+    .animate-float { animation: none; }
+    .flip-card-inner { transition: none; }
 }
