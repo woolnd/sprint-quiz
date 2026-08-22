@@ -7,14 +7,15 @@
     uv run uvicorn sprint_quiz.web.app:app --reload
 """
 
+import json
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sprint_quiz.db.schema import init_db
-from sprint_quiz.db.repository import get_pending_quizzes
+from sprint_quiz.db.repository import get_pending_quizzes, get_quiz
 
 app = FastAPI(title="Sprint Quiz")
 init_db()
@@ -54,4 +55,23 @@ async def admin_review(request: Request):
         request=request,
         name="admin_review.html",
         context={"quizzes": quizzes, "stats": stats},
+    )
+
+
+@app.get("/quiz/{quiz_id}", response_class=HTMLResponse)
+async def quiz_review(request: Request, quiz_id: int):
+    """질문/답변 리뷰 페이지. 이메일의 "정답 확인하기" 링크가 향하게 될 페이지다."""
+    quiz = get_quiz(quiz_id)
+    if quiz is None:
+        raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
+
+    try:
+        hints = json.loads(quiz["keywords_hint"] or "[]")
+    except json.JSONDecodeError:
+        hints = []
+
+    return templates.TemplateResponse(
+        request=request,
+        name="quiz_review.html",
+        context={"quiz": quiz, "hints": hints},
     )

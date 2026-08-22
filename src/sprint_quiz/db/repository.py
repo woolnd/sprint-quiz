@@ -86,6 +86,13 @@ def save_quiz(keyword_id: int, quiz: dict) -> int:
         )
         return cur.lastrowid
 
+def get_quiz(quiz_id: int) -> sqlite3.Row | None:
+    """id로 질문 하나를 가져온다."""
+    with get_connection() as conn:
+        cur = conn.execute("SELECT * FROM quizzes WHERE id = ?", (quiz_id,))
+        return cur.fetchone()
+
+
 def get_pending_quizzes() -> list[sqlite3.Row]:
     """아직 발송하지 않은 질문 목록을 가져온다."""
     with get_connection() as conn:
