@@ -7,15 +7,25 @@
     uv run uvicorn sprint_quiz.web.app:app --reload
 """
 
+import os
+import secrets
 import json
 from pathlib import Path
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from dotenv import load_dotenv
 
 from sprint_quiz.db.schema import init_db
-from sprint_quiz.db.repository import get_pending_quizzes, get_quiz
+from sprint_quiz.db.repository import (
+    get_pending_quizzes, 
+    get_quiz,
+    approve_quiz,
+    reject_quiz,
+    get_quiz_stats,
+    )
 
 app = FastAPI(title="Sprint Quiz")
 init_db()
@@ -29,7 +39,6 @@ templates = Jinja2Templates(directory=BASE_DIR / 'templates')
 # /static 으로 시작하는 요청은 static 폴더의 파일을 그대로 내보낸다
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
-
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """서비스 소개 페이지"""
@@ -40,22 +49,36 @@ async def home(request: Request):
         name="index.html",
     )
 
+load_dotenv()
+security = HTTPBasic()
+
+def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    """관리자 인증. 틀리면 401과 함께 브라우저 기본 로그인 창을 뛰운다."""
+    correct_username = secrets.compare_digest(
+        credentials.username, os.environ["ADMIN_USERNAME"]
+    )
+    correct_password = secrets.compare_digest(
+        credentials.password, os.environ["ADMIN_PASSWORD"]
+    )
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=401,
+            detail="인증 실패",
+            headers={"WWW-Authenticate": "Basic"}
+        )
+
 
 @app.get("/admin/review", response_class=HTMLResponse)
-async def admin_review(request: Request):
-    """관리자 승인 대기열 페이지.
-
-    디자인만 우선 구현한 상태다. 승인/거절 버튼은 아직 동작하지 않고,
-    approved/rejected 상태 자체가 DB에 없어 0으로 고정해 보여준다.
-    인증도 아직 없다 — 실제로 쓰기 전에 반드시 붙여야 한다.
-    """
+async def admin_review(request: Request, _: None = Depends(verify_admin)):
+    """관리자 승인 대기열 페이지."""
     quizzes = get_pending_quizzes()
-    stats = {"pending": len(quizzes), "approved": 0, "rejected": 0}
+    stats = get_quiz_stats()
     return templates.TemplateResponse(
         request=request,
         name="admin_review.html",
-        context={"quizzes": quizzes, "stats": stats},
+        context={"quizzes": quizzes, "stats": stats}
     )
+
 
 
 @app.get("/quiz/{quiz_id}", response_class=HTMLResponse)
@@ -75,3 +98,19 @@ async def quiz_review(request: Request, quiz_id: int):
         name="quiz_review.html",
         context={"quiz": quiz, "hints": hints},
     )
+
+
+@app.post("/admin/review/{quiz_id}/approve")
+async def approve_quiz_route(quiz_id: int, _: None = Depends(verify_admin)):
+    if get_quiz(quiz_id) is None:
+        raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
+    approve_quiz(quiz_id)
+    return RedirectResponse(url="/admin/review", status_code=303)
+
+
+@app.post("/admin/review/{quiz_id}/reject")
+async def reject_quiz_route(quiz_id: int, _: None = Depends(verify_admin)):
+    if get_quiz(quiz_id) is None:
+        raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
+    reject_quiz(quiz_id)
+    return RedirectResponse(url="/admin/review", status_code=303)

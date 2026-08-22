@@ -171,7 +171,7 @@ def get_next_pending_quiz() -> sqlite3.Row | None:
     """발송하지 않은 질문 중 가장 오래된 것 하나를 가져온다."""
     with get_connection() as conn:
         cur = conn.execute(
-            "SELECT * FROM quizzes WHERE status = 'pending' ORDER BY id LIMIT 1"
+            "SELECT * FROM quizzes WHERE status = 'approved' ORDER BY id LIMIT 1"
         )
         return cur.fetchone()
 
@@ -186,3 +186,34 @@ def mark_quiz_sent(quiz_id: int) -> None:
             """,
             (quiz_id,),
         )
+
+
+def approve_quiz(quiz_id: int) -> None:
+    """질문을 승인 상태로 표시한다."""
+    with get_connection() as conn:
+        conn.execute(
+             "UPDATE quizzes SET status = 'approved' WHERE id = ?",
+             (quiz_id,),
+        )
+
+def reject_quiz(quiz_id: int) -> None:
+    """질문을 반려 상태로 표시한다."""
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE quizzes SET status = 'rejected' WHERE id = ?",
+            (quiz_id,),
+        )
+
+def get_quiz_stats() -> dict:
+    """상태별 퀴즈 개수를 집계한다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT status, COUNT(*) AS count FROM quizzes GROUP BY status"
+        )
+        counts = {row["status"]: row["count"] for row in cur.fetchall()}
+
+    return {
+        "pending": counts.get("pending", 0),
+        "approved": counts.get("approved", 0),
+        "rejected": counts.get("rejected", 0),
+    }
