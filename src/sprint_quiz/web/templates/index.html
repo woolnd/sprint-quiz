@@ -18,16 +18,15 @@
     읽을 때는 알았는데 말로는 안 나오는 것들을 하나씩 물어봐 드릴게요.
 </p>
 
-<!-- 구독 폼 (Phase 5에서 실제 등록 처리 연결 예정) -->
-<div class="flex flex-col sm:flex-row gap-md mt-sm">
+<form action="/subscribe" method="post" class="flex flex-col sm:flex-row gap-md mt-sm">
 <div class="flex-grow max-w-md bg-surface-container-lowest rounded-2xl p-2 flex items-center transition-shadow shadow-[0_8px_30px_rgb(0,0,0,0.06)] focus-within:shadow-[0_8px_30px_rgb(0,40,142,0.15)]">
 <span class="material-symbols-outlined text-outline px-3">mail</span>
-<input class="flex-grow bg-transparent border-none focus:ring-0 text-body-md font-body-md py-2 outline-none" placeholder="이메일 주소를 입력하세요" type="email">
+<input class="flex-grow bg-transparent border-none focus:ring-0 text-body-md font-body-md py-2 outline-none" placeholder="이메일 주소를 입력하세요" type="email" name="email" required>
 </div>
-<button class="bg-primary text-on-primary px-8 py-4 rounded-2xl font-label-md text-label-md hover:bg-surface-tint hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 whitespace-nowrap">
+<button type="submit" class="bg-primary text-on-primary px-8 py-4 rounded-2xl font-label-md text-label-md hover:bg-surface-tint hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 whitespace-nowrap">
     무료로 시작하기
 </button>
-</div>
+</form>
 
 <div class="flex items-center gap-2 text-caption font-caption text-on-surface-variant mt-2">
 <span class="material-symbols-outlined text-sm text-tertiary-container">check_circle</span>
@@ -205,14 +204,139 @@
 <p class="text-body-lg font-body-lg text-primary-fixed-dim mb-2xl leading-relaxed">
     메일 주소만 남기면 됩니다. 언제든 해지할 수 있어요.
 </p>
-<div class="flex flex-col sm:flex-row gap-md w-full justify-center">
-<input class="px-8 py-5 rounded-2xl bg-surface-container-lowest/95 text-on-surface border-none focus:ring-4 focus:ring-primary-fixed-dim/50 text-body-lg w-full sm:w-auto min-w-[320px] shadow-[0_8px_30px_rgb(0,0,0,0.1)] outline-none transition-all placeholder:text-outline" placeholder="이메일 주소 입력" type="email">
-<button class="bg-surface-container-lowest text-primary px-10 py-5 rounded-2xl font-headline-md text-body-lg hover:bg-white hover:-translate-y-1 hover:shadow-[0_15px_40px_rgb(0,0,0,0.15)] transition-all duration-300 whitespace-nowrap shadow-lg">
+<form action="/subscribe" method="post" class="flex flex-col sm:flex-row gap-md w-full justify-center">
+<input class="px-8 py-5 rounded-2xl bg-surface-container-lowest/95 text-on-surface border-none focus:ring-4 focus:ring-primary-fixed-dim/50 text-body-lg w-full sm:w-auto min-w-[320px] shadow-[0_8px_30px_rgb(0,0,0,0.1)] outline-none transition-all placeholder:text-outline" placeholder="이메일 주소 입력" type="email" name="email" required>
+<button type="submit" class="bg-surface-container-lowest text-primary px-10 py-5 rounded-2xl font-headline-md text-body-lg hover:bg-white hover:-translate-y-1 hover:shadow-[0_15px_40px_rgb(0,0,0,0.15)] transition-all duration-300 whitespace-nowrap shadow-lg">
     지금 바로 구독하기
 </button>
-</div>
+</form>
 </div>
 </section>
 
 </main>
+{% endblock %}
+
+{% block body_extra %}
+<!-- 구독 결과 모달 -->
+<div id="subscription-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+<div class="absolute inset-0 bg-on-surface/20 backdrop-blur-md transition-opacity"></div>
+<div class="relative bg-surface-container-lowest rounded-3xl shadow-2xl max-w-md w-full p-8 transform transition-all scale-95 opacity-0 duration-300 flex flex-col items-center text-center gap-lg" id="modal-card">
+<img id="modal-icon" class="w-20 h-20 mb-2" alt="">
+<div class="space-y-2">
+<h3 id="modal-title" class="text-headline-md font-headline-md text-on-surface"></h3>
+<p id="modal-message" class="text-body-md font-body-md text-on-surface-variant leading-relaxed"></p>
+</div>
+<button onclick="closeSubscriptionModal()" class="w-full bg-primary text-on-primary py-4 rounded-2xl font-label-md text-label-md hover:bg-surface-tint transition-colors shadow-lg shadow-primary/20">
+    확인
+</button>
+</div>
+</div>
+
+<!-- 구독 성공 시 터지는 폭죽 -->
+<canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-[110] hidden"></canvas>
+
+<script>
+(function () {
+  // 서버가 /subscribe 처리 후 붙여주는 쿼리스트링으로 결과를 판단한다
+  const SUBSCRIBED_RESULT = {{ request.query_params.get('subscribed', '')|tojson }};
+
+  const MODAL_CONTENT = {
+    success: {
+      title: '구독 완료!',
+      message: '내일 아침 8시에 첫 질문이 도착합니다.',
+      icon: '/static/icons/sub_success.png',
+    },
+    duplicate: {
+      title: '이미 구독 중입니다',
+      message: '입력하신 이메일은 이미 매일 아침 퀴즈를 받고 계십니다.',
+      icon: '/static/icons/sub_dupli.png',
+    },
+    invalid: {
+      title: '이메일 형식 오류',
+      message: '올바른 이메일 형식을 입력해주세요.',
+      icon: '/static/icons/sub_error.png',
+    },
+  };
+
+  function showModal(type) {
+    const content = MODAL_CONTENT[type];
+    if (!content) return;
+
+    const modal = document.getElementById('subscription-modal');
+    const card = document.getElementById('modal-card');
+    const icon = document.getElementById('modal-icon');
+
+    icon.src = content.icon;
+    document.getElementById('modal-title').textContent = content.title;
+    document.getElementById('modal-message').textContent = content.message;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+      card.classList.remove('scale-95', 'opacity-0');
+      card.classList.add('scale-100', 'opacity-100');
+    }, 10);
+
+    if (type === 'success') startConfetti();
+  }
+
+  window.closeSubscriptionModal = function () {
+    const modal = document.getElementById('subscription-modal');
+    const card = document.getElementById('modal-card');
+    card.classList.add('scale-95', 'opacity-0');
+    card.classList.remove('scale-100', 'opacity-100');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      stopConfetti();
+    }, 300);
+  };
+
+  let confettiActive = false;
+  function startConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.classList.remove('hidden');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = Array.from({ length: 120 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 8 + 4,
+      color: ['#00288e', '#4e45d5', '#6ffbbe', '#ffdad6'][Math.floor(Math.random() * 4)],
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * 6.28,
+    }));
+
+    confettiActive = true;
+    function animate() {
+      if (!confettiActive) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p) => {
+        p.y += p.speed;
+        p.x += Math.sin(p.angle) * 2;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        if (p.y > canvas.height) p.y = -20;
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  function stopConfetti() {
+    confettiActive = false;
+    document.getElementById('confetti-canvas').classList.add('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (SUBSCRIBED_RESULT) {
+      showModal(SUBSCRIBED_RESULT);
+      // 새로고침해도 모달이 다시 뜨지 않도록 쿼리스트링을 주소창에서 지운다
+      history.replaceState(null, '', window.location.pathname);
+    }
+  });
+})();
+</script>
 {% endblock %}
