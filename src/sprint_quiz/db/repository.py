@@ -171,7 +171,7 @@ def get_next_pending_quiz() -> sqlite3.Row | None:
     """발송하지 않은 질문 중 가장 오래된 것 하나를 가져온다."""
     with get_connection() as conn:
         cur = conn.execute(
-            "SELECT * FROM quizzes WHERE status = 'pending' ORDER BY id LIMIT 1"
+            "SELECT * FROM quizzes WHERE status = 'approved' ORDER BY id LIMIT 1"
         )
         return cur.fetchone()
 
