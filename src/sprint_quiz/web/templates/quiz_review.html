@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Sprint Quiz - 오늘의 퀴즈 리뷰{% endblock %}
+
+{% block content %}
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-lg py-2xl">
+<div class="max-w-3xl mx-auto flex flex-col gap-lg">
+
+<!-- Context Header -->
+<div class="text-center mb-md">
+<span class="inline-flex items-center justify-center px-md py-sm bg-surface-container-low text-on-surface-variant rounded-full font-label-md text-label-md mb-md">
+<span class="material-symbols-outlined text-[16px] mr-sm">mail</span>
+오늘의 복습 퀴즈
+</span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">오늘의 퀴즈 리뷰</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm">핵심 질문과 AI 모범 답안을 통해 학습 내용을 복습해 보세요.</p>
+</div>
+
+<!-- Question -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-xl border border-outline-variant/50">
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-primary mt-xs" style="font-variation-settings: 'FILL' 1;">help</span>
+<div>
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">질문</h2>
+<p class="font-body-lg text-body-lg text-on-surface">{{ quiz.question }}</p>
+</div>
+</div>
+</div>
+
+<!-- Model Answer -->
+<div class="bg-primary-fixed rounded-xl shadow-sm p-xl border border-primary/20 relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary opacity-5 rounded-full blur-2xl"></div>
+<div class="flex items-start gap-md relative z-10">
+<span class="material-symbols-outlined text-primary mt-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<h2 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-sm font-bold">AI 모범 답안</h2>
+<p class="font-body-md text-body-md text-on-surface">{{ quiz.answer }}</p>
+</div>
+</div>
+</div>
+
+<!-- 핵심 단어 -->
+{% if hints %}
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-xl border-l-4 border-l-secondary">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">핵심 단어</h3>
+</div>
+<div class="flex flex-wrap gap-sm">
+{% for hint in hints %}
+<span class="bg-surface-container-low text-on-surface-variant px-md py-sm rounded-full font-label-md text-label-md">{{ hint }}</span>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+<!-- Action Area -->
+<div class="flex justify-center mt-lg pt-lg border-t border-outline-variant/50">
+<a href="/" class="bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-md px-xl rounded-lg font-bold shadow-sm transition-colors active:scale-95 duration-200 inline-flex items-center gap-sm">
+홈으로 돌아가기
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+
+</div>
+</main>
+{% endblock %}
