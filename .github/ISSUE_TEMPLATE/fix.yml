@@ -7,7 +7,7 @@ body:
     attributes:
       label: "📌 버그 개요"
       description: "어떤 버그인지 짧고 명확하게 설명해 주세요."
-      placeholder: "예: 로그인 버튼을 눌러도 반응이 없습니다."
+      placeholder: "예: 승인 큐가 비었을 때도 발송 스케줄러가 에러 없이 종료되지 않습니다."
     validations:
       required: true
   - type: textarea
@@ -26,22 +26,22 @@ body:
     attributes:
       label: "🎯 기대 결과 vs 실제 결과"
       description: "원래 어떻게 작동해야 하는지, 현재는 어떻게 작동하는지 적어주세요."
-      placeholder: "기대: 메인 화면으로 이동함 / 실제: 앱이 종료됨"
+      placeholder: "기대: 발송 건너뛰고 로그만 남김 / 실제: 예외 발생 후 스케줄러 프로세스 종료"
     validations:
       required: true
   - type: input
     id: environment
     attributes:
-      label: "💻 테스트 환경"
-      description: "문제가 발생한 기기와 OS 버전을 적어주세요. (iOS 개발 시 필수!)"
-      placeholder: "예: iPhone 15 Pro (iOS 17.4) / Simulator"
+      label: "💻 실행 환경"
+      description: "문제가 발생한 환경을 적어주세요."
+      placeholder: "예: 로컬(uv run) / Docker Compose / Oracle Cloud 배포 서버, Python 3.12"
     validations:
       required: true
   - type: textarea
     id: screenshots
     attributes:
-      label: "📸 스크린샷 / 영상"
-      description: "이미지나 영상을 드래그해서 넣어주시면 문제 파악이 훨씬 빠릅니다."
+      label: "📸 스크린샷 / 로그"
+      description: "에러 로그, llm_calls.csv 관련 행, 스크린샷 등을 넣어주시면 문제 파악이 훨씬 빠릅니다."
   - type: textarea
     id: references
     attributes:

@@ -5,17 +5,17 @@ body:
   - type: input
     id: version
     attributes:
-      label: "🏷 배포 버전"
-      description: "이번에 배포할 버전 정보를 입력해 주세요."
-      placeholder: "예: v1.0.2 (Build 15)"
+      label: "🏷 배포 버전 / 태그"
+      description: "이번 배포의 커밋 태그나 버전 정보를 입력해 주세요."
+      placeholder: "예: v0.4.0 (Phase 4 관리자 승인 페이지 반영)"
     validations:
       required: true
   - type: textarea
     id: release-summary
     attributes:
-      label: "📝 주요 변경 사항 (Release Notes)"
+      label: "📝 주요 변경 사항"
       description: "이번 배포에 포함된 핵심 기능이나 수정 사항을 요약해 주세요."
-      placeholder: "예: 소셜 로그인 오류 수정, 메인 화면 로딩 속도 개선 등"
+      placeholder: "예: 승인 큐 기능 추가, Prompt Caching 반영, discord.py 봇 연동"
     validations:
       required: true
   - type: textarea
@@ -24,11 +24,13 @@ body:
       label: "✅ 배포 전 체크리스트"
       description: "배포 전 반드시 확인해야 할 항목들입니다."
       value: |
-        - [ ] 빌드 번호(Build Number) 업데이트 완료
-        - [ ] 모든 단위 테스트(Unit Test) 통과
-        - [ ] API 환경 설정 확인 (Development -> Production)
-        - [ ] 시뮬레이터 및 실기기 최종 동작 확인
-        - [ ] 스토어 제출용 스크린샷 및 메타데이터 준비 완료
+        - [ ] .env / 환경변수가 배포 서버(Oracle Cloud)에 반영됨
+        - [ ] `docker-compose up --build` 로컬에서 정상 기동 확인
+        - [ ] DB 마이그레이션(schema 변경) 여부 확인 및 백업
+        - [ ] 구독자 DB·llm_calls.csv가 이미지에 포함되지 않았는지 확인
+        - [ ] 헬스체크 엔드포인트 정상 응답 확인
+    validations:
+      required: true
   - type: textarea
     id: related-issues
     attributes:

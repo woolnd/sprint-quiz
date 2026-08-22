@@ -7,7 +7,7 @@ body:
     attributes:
       label: "📄 설명"
       description: "새로운 기능에 대한 설명을 작성해 주세요."
-      placeholder: "자세히 적을수록 좋습니다!"
+      placeholder: "예: 관리자 승인 페이지(/admin/review)에 반려 사유 선택 UI 추가"
     validations:
       required: true
   - type: textarea
