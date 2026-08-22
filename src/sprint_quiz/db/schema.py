@@ -1,8 +1,10 @@
 import sqlite3
 from pathlib import Path
 
-# DB 파일은 프로젝트 루트에 생성된다 (.gitignore 처리 필요)
-DB_PATH = Path("sprint_quiz.db")
+# DB 파일은 항상 프로젝트 루트에 생성된다 (.gitignore 처리 필요)
+# __file__ 기준 절대경로라 실행 위치(cwd)와 무관하게 경로가 고정된다
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+DB_PATH = PROJECT_ROOT / "sprint_quiz.db"
 
 SCHEMA = """
 -- 학습 자료 (Notion에서 내보낸 마크다운)

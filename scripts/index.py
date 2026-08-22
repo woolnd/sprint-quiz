@@ -11,6 +11,7 @@ data/ 폴더의 마크다운 자료를 읽어 키워드를 추출하고,
 
 import argparse
 import asyncio
+from pathlib import Path
 
 from sprint_quiz.db.schema import init_db
 from sprint_quiz.db.repository import (
@@ -28,7 +29,8 @@ from sprint_quiz.generator.keyword import extract_keywords
 from sprint_quiz.generator.quiz import generate_quiz
 from sprint_quiz.generator.validator import validate_quiz
 
-DATA_DIR = "data/sample"
+# __file__ 기준 절대경로라 실행 위치(cwd)와 무관하게 경로가 고정된다
+DATA_DIR = Path(__file__).parent.parent / "data" / "sample"
 MAX_RETRY = 2        # 재생성 최대 횟수 (최초 1회 + 재시도 2회 = 총 3번)
 MAX_CONCURRENCY = 3  # 동시에 처리할 키워드 개수 상한
 
