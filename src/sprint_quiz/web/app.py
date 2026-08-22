@@ -19,7 +19,8 @@ from sprint_quiz.db.repository import (
     get_pending_quizzes, 
     get_quiz,
     approve_quiz,
-    reject_quiz
+    reject_quiz,
+    get_quiz_stats,
     )
 
 app = FastAPI(title="Sprint Quiz")
@@ -48,19 +49,15 @@ async def home(request: Request):
 
 @app.get("/admin/review", response_class=HTMLResponse)
 async def admin_review(request: Request):
-    """관리자 승인 대기열 페이지.
-
-    디자인만 우선 구현한 상태다. 승인/거절 버튼은 아직 동작하지 않고,
-    approved/rejected 상태 자체가 DB에 없어 0으로 고정해 보여준다.
-    인증도 아직 없다 — 실제로 쓰기 전에 반드시 붙여야 한다.
-    """
+    """관리자 승인 대기열 페이지."""
     quizzes = get_pending_quizzes()
-    stats = {"pending": len(quizzes), "approved": 0, "rejected": 0}
+    stats = get_quiz_stats()
     return templates.TemplateResponse(
         request=request,
         name="admin_review.html",
-        context={"quizzes": quizzes, "stats": stats},
+        context={"quizzes": quizzes, "stats": stats}
     )
+
 
 
 @app.get("/quiz/{quiz_id}", response_class=HTMLResponse)

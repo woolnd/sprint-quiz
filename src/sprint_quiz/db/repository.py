@@ -203,3 +203,17 @@ def reject_quiz(quiz_id: int) -> None:
             "UPDATE quizzes SET status = 'rejected' WHERE id = ?",
             (quiz_id,),
         )
+
+def get_quiz_stats() -> dict:
+    """상태별 퀴즈 개수를 집계한다."""
+    with get_connection() as conn:
+        cur = conn.execute(
+            "SELECT status, COUNT(*) AS count FROM quizzes GROUP BY status"
+        )
+        counts = {row["status"]: row["count"] for row in cur.fetchall()}
+
+    return {
+        "pending": counts.get("pending", 0),
+        "approved": counts.get("approved", 0),
+        "rejected": counts.get("rejected", 0),
+    }
