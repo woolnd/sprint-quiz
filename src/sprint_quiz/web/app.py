@@ -13,7 +13,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from sprint_quiz.db.schema import init_db
+from sprint_quiz.db.repository import get_pending_quizzes
+
 app = FastAPI(title="Sprint Quiz")
+init_db()
 
 # __file__은 이 파일의 경로다. 이를 기준으로 templates/static 위치를 잡으면
 # 어느 디렉토리에서 실행하든 경로가 깨지지 않는다
@@ -33,4 +37,21 @@ async def home(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="index.html",
+    )
+
+
+@app.get("/admin/review", response_class=HTMLResponse)
+async def admin_review(request: Request):
+    """관리자 승인 대기열 페이지.
+
+    디자인만 우선 구현한 상태다. 승인/거절 버튼은 아직 동작하지 않고,
+    approved/rejected 상태 자체가 DB에 없어 0으로 고정해 보여준다.
+    인증도 아직 없다 — 실제로 쓰기 전에 반드시 붙여야 한다.
+    """
+    quizzes = get_pending_quizzes()
+    stats = {"pending": len(quizzes), "approved": 0, "rejected": 0}
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_review.html",
+        context={"quizzes": quizzes, "stats": stats},
     )

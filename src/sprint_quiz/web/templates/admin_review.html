@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% set active = 'admin' %}
+{% block title %}Sprint Quiz - Admin Approval Queue{% endblock %}
+
+{% block content %}
+<main class="flex-grow max-w-container-max mx-auto w-full px-lg py-2xl space-y-2xl">
+
+<!-- 새 퀴즈 생성 -->
+<section class="bg-surface-container-lowest p-xl rounded-2xl shadow-sm border border-outline-variant space-y-lg">
+<div class="space-y-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">새 퀴즈 생성 (Create New Quiz)</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">노션 파일(PDF, Markdown)을 업로드하여 AI로 퀴즈를 자동 생성합니다.</p>
+</div>
+
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-2xl flex flex-col items-center justify-center gap-md bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-primary text-display-lg">upload_file</span>
+<div class="text-center">
+<p class="font-body-lg text-body-lg font-bold text-on-surface">파일을 드래그하여 놓거나 클릭하세요</p>
+<p class="font-caption text-caption text-on-surface-variant">PDF, Markdown, TXT 지원 (최대 10MB)</p>
+</div>
+</div>
+
+<div class="space-y-sm">
+<div class="flex justify-between items-center font-label-md text-label-md">
+<span class="text-on-surface-variant">파일 분석 중...</span>
+<span class="text-primary">65%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+
+<!-- 업로드/생성 파이프라인은 아직 CLI(scripts/index.py) 전용이라 이 버튼은 비활성 상태로 둔다 -->
+<button class="w-full bg-primary text-on-primary py-md rounded-lg font-label-md text-label-md opacity-50 cursor-not-allowed shadow-sm flex items-center justify-center gap-sm" disabled title="준비 중">
+<span class="material-symbols-outlined">auto_awesome</span>
+AI 퀴즈 생성 시작
+</button>
+</section>
+
+<div class="space-y-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">승인 대기열 (Approval Queue)</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">사용자가 제출한 퀴즈를 검토하고 승인하거나 거절합니다.</p>
+</div>
+
+<!-- Dashboard Summary -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface-container-lowest p-xl rounded-2xl shadow-sm border border-outline-variant flex flex-col justify-between">
+<div class="flex items-center gap-sm mb-sm text-surface-tint">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+<span class="font-label-md text-label-md">대기 중 (Pending)</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">{{ stats.pending }}</div>
+</div>
+<div class="bg-surface-container-lowest p-xl rounded-2xl shadow-sm border border-outline-variant flex flex-col justify-between">
+<div class="flex items-center gap-sm mb-sm text-tertiary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md">승인됨 (Approved)</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">{{ stats.approved }}</div>
+</div>
+<div class="bg-surface-container-lowest p-xl rounded-2xl shadow-sm border border-outline-variant flex flex-col justify-between">
+<div class="flex items-center gap-sm mb-sm text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cancel</span>
+<span class="font-label-md text-label-md">거절됨 (Rejected)</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">{{ stats.rejected }}</div>
+</div>
+</section>
+
+<!-- Pending Quiz List -->
+<section class="space-y-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-sm">검토 대기 중인 퀴즈</h2>
+
+{% if quizzes %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+{% for quiz in quizzes %}
+<article class="bg-surface-container-lowest p-xl rounded-2xl shadow-sm border border-outline-variant space-y-md">
+<div class="flex justify-between items-start">
+<span class="bg-primary-fixed text-on-primary-fixed px-sm py-xs rounded-full font-caption text-caption">{{ quiz.topic }}</span>
+<span class="font-caption text-caption text-on-surface-variant">#{{ quiz.id }}</span>
+</div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">{{ quiz.question }}</h3>
+<div class="bg-surface-container-low p-md rounded-lg space-y-sm">
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+<span class="font-label-md text-label-md">AI 요약 (AI Summary)</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">{{ quiz.answer }}</p>
+</div>
+<!-- 승인/거절 처리 로직은 아직 없다. 버튼은 디자인만 반영해둔다 -->
+<div class="flex gap-sm pt-md">
+<button class="flex-1 bg-primary text-on-primary py-sm rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm">승인 (Approve)</button>
+<button class="flex-1 bg-surface-container text-on-surface py-sm rounded-lg font-label-md text-label-md border border-outline-variant hover:bg-error-container hover:text-on-error-container hover:border-error-container transition-colors shadow-sm">거절 (Reject)</button>
+</div>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<p class="font-body-md text-body-md text-on-surface-variant text-center py-2xl">검토 대기 중인 퀴즈가 없습니다.</p>
+{% endif %}
+</section>
+
+</main>
+{% endblock %}
