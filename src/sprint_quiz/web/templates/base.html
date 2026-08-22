@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>{% block title %}Sprint Quiz{% endblock %}</title>
+
+<link rel="icon" href="/static/logo.png" type="image/png">
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet">
+
+<!-- Tailwind 설정. CDN 방식이라 빌드 없이 이 스크립트로 토큰을 주입한다.
+     반드시 tailwindcss CDN 스크립트 뒤에 와야 한다. -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-primary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#e7e8e9",
+                "surface-container": "#edeeef",
+                "on-secondary-fixed-variant": "#372abf",
+                "on-primary-container": "#a8b8ff",
+                "surface-bright": "#f8f9fa",
+                "tertiary-container": "#00563a",
+                "primary-fixed-dim": "#b8c4ff",
+                "on-primary-fixed": "#001453",
+                "secondary-fixed-dim": "#c3c0ff",
+                "secondary": "#4e45d5",
+                "inverse-surface": "#2e3132",
+                "tertiary": "#003d27",
+                "surface-variant": "#e1e3e4",
+                "on-tertiary": "#ffffff",
+                "on-background": "#191c1d",
+                "inverse-on-surface": "#f0f1f2",
+                "on-secondary-container": "#fffbff",
+                "surface-dim": "#d9dadb",
+                "error-container": "#ffdad6",
+                "on-error-container": "#93000a",
+                "outline": "#757684",
+                "primary-container": "#1e40af",
+                "surface-tint": "#3755c3",
+                "tertiary-fixed": "#6ffbbe",
+                "inverse-primary": "#b8c4ff",
+                "secondary-fixed": "#e3dfff",
+                "on-secondary-fixed": "#100069",
+                "tertiary-fixed-dim": "#4edea3",
+                "on-primary-fixed-variant": "#173bab",
+                "error": "#ba1a1a",
+                "primary-fixed": "#dde1ff",
+                "on-tertiary-container": "#3fd298",
+                "secondary-container": "#6860ef",
+                "on-secondary": "#ffffff",
+                "surface-container-low": "#f3f4f5",
+                "on-surface": "#191c1d",
+                "background": "#f8f9fa",
+                "primary": "#00288e",
+                "surface": "#f8f9fa",
+                "surface-container-highest": "#e1e3e4",
+                "on-error": "#ffffff",
+                "on-tertiary-fixed": "#002113",
+                "outline-variant": "#c4c5d5",
+                "on-tertiary-fixed-variant": "#005236",
+                "on-surface-variant": "#444653"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1rem",
+                "3xl": "1.5rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "2xl": "48px",
+                "xl": "32px",
+                "container-max": "1120px",
+                "sm": "8px",
+                "margin-mobile": "16px",
+                "gutter": "24px",
+                "xs": "4px",
+                "md": "16px",
+                "base": "4px",
+                "3xl": "64px",
+                "lg": "24px",
+                "4xl": "96px"
+        },
+        "fontFamily": {
+                "label-md": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "display-lg": ["Inter"],
+                "caption": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "body-lg": ["Inter"],
+                "headline-md": ["Inter"]
+        },
+        "fontSize": {
+                "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                "headline-lg": ["32px", { "lineHeight": "1.4", "letterSpacing": "0em", "fontWeight": "700" }],
+                "body-md": ["16px", { "lineHeight": "1.7", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                "display-lg": ["48px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                "caption": ["12px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                "headline-lg-mobile": ["24px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                "body-lg": ["18px", { "lineHeight": "1.7", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                "headline-md": ["24px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "600" }]
+        }
+      },
+    },
+  }
+</script>
+
+<link href="/static/style.css" rel="stylesheet">
+{% block head_extra %}{% endblock %}
+</head>
+
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+<!-- TopNavBar (공통) -->
+<nav class="bg-surface/90 backdrop-blur-md border-b-0 shadow-[0_4px_20px_rgb(0,0,0,0.03)] sticky top-0 z-50 w-full h-20 transition-all">
+<div class="flex justify-between items-center w-full h-full px-margin-mobile md:px-lg max-w-container-max mx-auto">
+
+<a class="flex items-center gap-3" href="/">
+  <!-- 로고 박스. logo.png를 쓰려면 아래 span을 img로 교체한다 (설명 참고) -->
+  <div class="w-9 h-9 flex items-center justify-center bg-primary-container rounded-lg shadow-sm">
+    <span class="material-symbols-outlined text-white text-[22px]" style="font-variation-settings: 'FILL' 1;">school</span>
+  </div>
+  <span class="text-headline-md font-bold text-primary tracking-tight">Sprint Quiz</span>
+</a>
+
+<div class="hidden md:flex gap-8 items-center">
+  {# 각 페이지에서 {% set active = '...' %}로 현재 메뉴를 지정한다 #}
+  {% set active = active|default('home') %}
+  <a class="{% if active == 'home' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/">홈</a>
+  <a class="{% if active == 'about' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/#features">서비스 소개</a>
+  <a class="{% if active == 'admin' %}text-primary font-bold border-b-2 border-primary pb-1{% else %}text-on-surface-variant hover:text-primary transition-colors duration-200{% endif %} font-label-md text-label-md" href="/admin/review">관리자 페이지</a>
+</div>
+
+<button class="bg-primary text-on-primary px-6 py-3 rounded-2xl font-label-md text-label-md hover:bg-surface-tint hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300">
+    구독하기
+</button>
+</div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- Footer (공통) -->
+<footer class="bg-surface-container-lowest py-3xl px-margin-mobile md:px-lg w-full mt-auto border-t border-surface-container-low">
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-6 flex flex-col gap-sm">
+<div class="flex items-center gap-3 mb-3">
+  <div class="w-9 h-9 flex items-center justify-center bg-primary-container rounded-lg shadow-sm">
+    <span class="material-symbols-outlined text-white text-[22px]" style="font-variation-settings: 'FILL' 1;">school</span>
+  </div>
+  <span class="text-headline-md font-bold text-primary tracking-tight">Sprint Quiz</span>
+</div>
+<p class="text-caption font-caption text-outline">Copyright © 2026 Sprint Quiz. All rights reserved.</p>
+</div>
+<div class="md:col-span-6 flex justify-start md:justify-end gap-xl mt-6 md:mt-0">
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">개인정보 처리방침</a>
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">디스코드</a>
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="mailto:wodnd0418@gmail.com">이메일</a>
+</div>
+</div>
+</footer>
+
+<script src="/static/main.js"></script>
+{% block body_extra %}{% endblock %}
+</body>
+</html>
