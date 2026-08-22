@@ -10,12 +10,17 @@
 import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from sprint_quiz.db.schema import init_db
-from sprint_quiz.db.repository import get_pending_quizzes, get_quiz
+from sprint_quiz.db.repository import (
+    get_pending_quizzes, 
+    get_quiz,
+    approve_quiz,
+    reject_quiz
+    )
 
 app = FastAPI(title="Sprint Quiz")
 init_db()
@@ -75,3 +80,19 @@ async def quiz_review(request: Request, quiz_id: int):
         name="quiz_review.html",
         context={"quiz": quiz, "hints": hints},
     )
+
+
+@app.post("/admin/review/{quiz_id}/approve")
+async def approve_quiz_route(quiz_id: int):
+    if get_quiz(quiz_id) is None:
+        raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
+    approve_quiz(quiz_id)
+    return RedirectResponse(url="/admin/review", status_code=303)
+
+
+@app.post("/admin/review/{quiz_id}/reject")
+async def reject_quiz_route(quiz_id: int):
+    if get_quiz(quiz_id) is None:
+        raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
+    reject_quiz(quiz_id)
+    return RedirectResponse(url="/admin/review", status_code=303)
