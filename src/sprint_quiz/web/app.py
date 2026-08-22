@@ -11,7 +11,7 @@ import os
 import secrets
 import json
 from pathlib import Path
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -25,6 +25,7 @@ from sprint_quiz.db.repository import (
     approve_quiz,
     reject_quiz,
     get_quiz_stats,
+    add_subscriber,
     )
 
 app = FastAPI(title="Sprint Quiz")
@@ -114,3 +115,12 @@ async def reject_quiz_route(quiz_id: int, _: None = Depends(verify_admin)):
         raise HTTPException(status_code=404, detail="퀴즈를 찾을 수 없습니다.")
     reject_quiz(quiz_id)
     return RedirectResponse(url="/admin/review", status_code=303)
+
+
+@app.post("/subscribe")
+async def subscribe(email: str = Form(...)):
+    subscriber_id = add_subscriber(channel="email", address=email)
+    if subscriber_id is None:
+        # 이미 등록된 이메일
+        return RedirectResponse(url="/?subscribed=duplicate", status_code=303)
+    return RedirectResponse(url="/?subscribed=success", status_code=303)
