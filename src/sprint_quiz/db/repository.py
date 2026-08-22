@@ -186,3 +186,20 @@ def mark_quiz_sent(quiz_id: int) -> None:
             """,
             (quiz_id,),
         )
+
+
+def approve_quiz(quiz_id: int) -> None:
+    """질문을 승인 상태로 표시한다."""
+    with get_connection() as conn:
+        conn.execute(
+             "UPDATE quizzes SET status = 'approved' WHERE id = ?",
+             (quiz_id,),
+        )
+
+def reject_quiz(quiz_id: int) -> None:
+    """질문을 반려 상태로 표시한다."""
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE quizzes SET status = 'rejected' WHERE id = ?",
+            (quiz_id,),
+        )
