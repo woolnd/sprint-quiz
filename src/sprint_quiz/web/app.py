@@ -18,7 +18,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from dotenv import load_dotenv
-
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from sprint_quiz.notify.email import send_daily_email
 from sprint_quiz.db.schema import init_db
 from sprint_quiz.db.repository import (
     get_pending_quizzes, 
@@ -29,7 +32,21 @@ from sprint_quiz.db.repository import (
     add_subscriber,
     )
 
-app = FastAPI(title="Sprint Quiz")
+scheduler = BackgroundScheduler(timezone="Asia/Seoul")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 매일 08:00(KST)에 발송 대기 질문 1건을 구독자 전체에게 보낸다.
+    # 발송 로직 자체는 notify/email.py에 이미 있으므로 호출만 등록한다.
+    scheduler.add_job(send_daily_email, CronTrigger(hour=8, minute=0))
+    scheduler.start()
+    yield
+    scheduler.shutdown()
+
+
+app = FastAPI(title="Sprint Quiz", lifespan=lifespan)
+
 init_db()
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
