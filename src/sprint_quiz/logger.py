@@ -34,6 +34,7 @@ def log_call(
     cache_read: int = 0,
 ) -> None:
     """LLM 호출 결과를 CSV 파일에 한 줄 기록한다."""
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     is_new = not LOG_PATH.exists()
 
     with LOG_PATH.open("a", newline="", encoding="utf-8") as f:

@@ -18,7 +18,7 @@ Sprint Quiz — 정리한 학습 노트를 기반으로 AI가 매일 오전 8시
 | 웹 | FastAPI + Jinja2 + Tailwind CDN |
 | 스케줄러 | APScheduler (Phase 4) |
 | 발송 | Resend (이메일), discord.py (디스코드) |
-| 배포 | Docker + Docker Compose → Oracle Cloud Free Tier |
+| 배포 | Docker + Docker Compose → GCP Compute Engine (e2-micro, Always Free) |
 
 프론트엔드 프레임워크(React 등)는 도입하지 않는다. 페이지가 소수이고 서버가 완성된 HTML을 반환하는 구조다.
 
@@ -106,7 +106,7 @@ Phase 4 진행 중 (MVP 완료 지점).
 
 - ✅ Phase 1 Baseline, Phase 2-A 배치 생성, Phase 3-A Validator + Prompt Caching + 비동기 병렬 처리
 - ✅ Phase 4: 이메일 발송(Resend), FastAPI 앱 + 서비스 소개 페이지
-- 진행 중: 디스코드 봇, 관리자 승인 페이지, APScheduler, Docker + Oracle Cloud 배포
+- 진행 중: 디스코드 봇, 관리자 승인 페이지, APScheduler, Docker + GCP 배포
 - 이후: Phase 3-B 자체 분류기 (MVP 이후), Phase 5 웹페이지, Phase 6 SM-2
 
 ## 컨벤션

@@ -233,7 +233,7 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | 관리자 승인 페이지 | 예정 |
 | 스케줄러 (매일 08:00) | 예정 |
 | 디스코드 봇 + 답변 확인 버튼 | 예정 |
-| Docker + Oracle Cloud 배포 | 예정 |
+| Docker + GCP 배포 | 예정 |
 
 ### 이후
 
@@ -260,7 +260,7 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | Notification | Resend (완료), discord.py | Phase 4 |
 | Web | FastAPI, Jinja2 | Phase 4 |
 | Infra | Docker, Docker Compose | Phase 4 |
-| Hosting | Oracle Cloud Free Tier | Phase 4 |
+| Hosting | GCP Compute Engine (e2-micro, Always Free) | Phase 4 |
 | CI/CD | GitHub Actions | Phase 5 |
 
 <br>
