@@ -235,10 +235,10 @@
 <!-- 구독 성공 시 터지는 폭죽 -->
 <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-[110] hidden"></canvas>
 
-<script>
+<script data-subscribed="{{ request.query_params.get('subscribed', '') }}">
 (function () {
   // 서버가 /subscribe 처리 후 붙여주는 쿼리스트링으로 결과를 판단한다
-  const SUBSCRIBED_RESULT = {{ request.query_params.get('subscribed', '')|tojson }};
+  const SUBSCRIBED_RESULT = document.currentScript.dataset.subscribed;
 
   const MODAL_CONTENT = {
     success: {
