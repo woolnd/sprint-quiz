@@ -34,7 +34,7 @@ body:
     attributes:
       label: "💻 실행 환경"
       description: "문제가 발생한 환경을 적어주세요."
-      placeholder: "예: 로컬(uv run) / Docker Compose / Oracle Cloud 배포 서버, Python 3.12"
+      placeholder: "예: 로컬(uv run) / Docker Compose / GCP 배포 서버, Python 3.12"
     validations:
       required: true
   - type: textarea

@@ -24,7 +24,7 @@ body:
       label: "✅ 배포 전 체크리스트"
       description: "배포 전 반드시 확인해야 할 항목들입니다."
       value: |
-        - [ ] .env / 환경변수가 배포 서버(Oracle Cloud)에 반영됨
+        - [ ] .env / 환경변수가 배포 서버(GCP e2-micro)에 반영됨
         - [ ] `docker-compose up --build` 로컬에서 정상 기동 확인
         - [ ] DB 마이그레이션(schema 변경) 여부 확인 및 백업
         - [ ] 구독자 DB·llm_calls.csv가 이미지에 포함되지 않았는지 확인
