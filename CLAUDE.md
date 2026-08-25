@@ -102,12 +102,13 @@ uv run uvicorn sprint_quiz.web.app:app --reload
 
 ## 현재 위치
 
-Phase 4 진행 중 (MVP 완료 지점).
+Phase 4 완료 (MVP 완료 지점).
 
 - ✅ Phase 1 Baseline, Phase 2-A 배치 생성, Phase 3-A Validator + Prompt Caching + 비동기 병렬 처리
-- ✅ Phase 4: 이메일 발송(Resend), FastAPI 앱 + 서비스 소개 페이지
-- 진행 중: 디스코드 봇, 관리자 승인 페이지, APScheduler, Docker + GCP 배포
-- 이후: Phase 3-B 자체 분류기 (MVP 이후), Phase 5 웹페이지, Phase 6 SM-2
+- ✅ Phase 4: 이메일 발송(Resend), FastAPI 앱 + 서비스 소개 페이지, 관리자 승인 페이지, 답변 확인 페이지, APScheduler(매일 08:00), Docker + GCP 배포
+- 보류(최후순위): 디스코드 봇
+- 진행 중: Phase 5 GitHub Actions CI/CD (GCP VM 자동 배포)
+- 이후: Phase 3-B 자체 분류기 (MVP 이후), Phase 5 구독 등록/해지 페이지·자료 업로드, Phase 6 SM-2
 
 ## 컨벤션
 

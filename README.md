@@ -223,24 +223,24 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | Prompt Caching | ✅ |
 | 비동기 병렬 처리 | ✅ |
 
-### Phase 4 — 발송 및 배포 (**MVP 완료 지점**)
+### Phase 4 — 발송 및 배포 (**MVP 완료 지점**) ✅ 완료
 
 | 작업 | 상태 |
 |---|---|
 | 이메일 발송 (Resend) | ✅ |
-| FastAPI 앱 + 서비스 소개 페이지 | 진행 중 |
-| 답변 확인 페이지 | 예정 |
-| 관리자 승인 페이지 | 예정 |
-| 스케줄러 (매일 08:00) | 예정 |
-| 디스코드 봇 + 답변 확인 버튼 | 예정 |
-| Docker + GCP 배포 | 예정 |
+| FastAPI 앱 + 서비스 소개 페이지 | ✅ |
+| 답변 확인 페이지 | ✅ |
+| 관리자 승인 페이지 | ✅ |
+| 스케줄러 (매일 08:00) | ✅ |
+| Docker + GCP 배포 | ✅ |
+| 디스코드 봇 + 답변 확인 버튼 | 보류 (최후순위) |
 
 ### 이후
 
 | Phase | 내용 | 상태 |
 |---|---|---|
 | Phase 3-B | 자체 분류기를 1차 필터로 배치 | MVP 이후 |
-| Phase 5 | 구독 등록/해지 페이지, 자료 업로드, CI/CD | 예정 |
+| Phase 5 | GitHub Actions CI/CD, 구독 등록/해지 페이지, 자료 업로드 | 진행 중 |
 | Phase 6 | 개인화, Spaced Repetition | 선택 |
 
 <br>
@@ -256,11 +256,11 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | 검증 | Claude API (LLM-as-a-Judge) | 완료 |
 | 비동기 | asyncio, AsyncAnthropic | 완료 |
 | 1차 필터 | 자체 학습 분류기 (PyTorch + transformers) | Phase 3-B |
-| Scheduler | APScheduler | Phase 4 |
-| Notification | Resend (완료), discord.py | Phase 4 |
-| Web | FastAPI, Jinja2 | Phase 4 |
-| Infra | Docker, Docker Compose | Phase 4 |
-| Hosting | GCP Compute Engine (e2-micro, Always Free) | Phase 4 |
+| Scheduler | APScheduler | 완료 |
+| Notification | Resend (완료), discord.py (보류) | Phase 4 |
+| Web | FastAPI, Jinja2 | 완료 |
+| Infra | Docker, Docker Compose | 완료 |
+| Hosting | GCP Compute Engine (e2-micro, Always Free) | 완료 |
 | CI/CD | GitHub Actions | Phase 5 |
 
 <br>
