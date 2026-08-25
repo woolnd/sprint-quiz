@@ -240,7 +240,7 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | Phase | 내용 | 상태 |
 |---|---|---|
 | Phase 3-B | 자체 분류기를 1차 필터로 배치 | MVP 이후 |
-| Phase 5 | GitHub Actions CI/CD, 구독 등록/해지 페이지, 자료 업로드 | 진행 중 |
+| Phase 5 | 구독 등록/해지 페이지, 자료 업로드 | 예정 |
 | Phase 6 | 개인화, Spaced Repetition | 선택 |
 
 <br>
@@ -261,6 +261,6 @@ Validator가 한 기준에서 불합격이면 다른 기준까지 함께 불합�
 | Web | FastAPI, Jinja2 | 완료 |
 | Infra | Docker, Docker Compose | 완료 |
 | Hosting | GCP Compute Engine (e2-micro, Always Free) | 완료 |
-| CI/CD | GitHub Actions | Phase 5 |
+| CI/CD | GitHub Actions (main push → GCP VM 자동 배포) | 완료 |
 
 <br>
